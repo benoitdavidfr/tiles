@@ -1,0 +1,25 @@
+title: tiles - services d'exposition de tuiles
+path: /geoapi/tiles
+doc: |
+  L'objectif est démontrer la mise en oeuvre de la géoinfra
+  
+  Points d'accès:
+    localhost:
+      - http://localhost/geoapi/tiles/index.php
+    sur_geoapi:
+      - http://tiles.geoapi.fr/igngp - identifie le web-service exposant sous la forme de tuiles les données du Géportail IGN
+      - http://tiles.geoapi.fr/igngp/layers - décrit les couches exposées
+      - http://tiles.geoapi.fr/igngp/layers/cartes> - identifie et décrit la couche cartes exposée sur le Géportail
+      - http://tiles.geoapi.fr/igngp/layers/cartes/16/32945/22940.jpg> - retourne une tuile
+  
+  synchro par:
+    http://localhost/synchro.php?remote=http://prod.geoapi.fr/   
+  
+journal: |
+  8/6/2019:
+    - création
+phpScripts:
+  - /geoapi/tiles/index.php
+phpIncludes:
+htmlFiles:
+  - /geoapi/tiles/tiles.yaml
