@@ -11,6 +11,7 @@ doc: |
       - http://tiles.geoapi.fr/igngp/layers - décrit les couches exposées
       - http://tiles.geoapi.fr/igngp/layers/cartes> - identifie et décrit la couche cartes exposée sur le Géportail
       - http://tiles.geoapi.fr/igngp/layers/cartes/16/32945/22940.jpg> - retourne une tuile
+      - http://tiles.geoapi.fr/igngp/layers/cartes/16/32945/22940.html> - retourne une page Html
   
   synchro par:
     http://localhost/synchro.php?remote=http://prod.geoapi.fr/   
@@ -18,6 +19,7 @@ doc: |
 journal: |
   8/6/2019:
     - création
+    - déploiement sur tiles.geoapi.fr
 phpScripts:
   - /geoapi/tiles/index.php
 phpIncludes:
