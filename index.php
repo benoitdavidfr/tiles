@@ -11,7 +11,6 @@ doc: |
     - simplification des noms de couches
     - ajout de couches non disponibles en WMTS
     - documentation intégrée
-    - génération de carte Leaflet intégrée
     - couche cartes plus simple d'emploi
     - mise en cache pour 21 jours (la durée pourrait dépendre du zoom)
     
@@ -26,7 +25,7 @@ require_once __DIR__.'/../../vendor/autoload.php';
 
 use Symfony\Component\Yaml\Yaml;
 
-$version = '2019-06-08T18:30:00';
+$version = '2019-06-08T21:00:00';
 $path_info = $_SERVER['PATH_INFO'] ?? null;
 $script_path = "http://$_SERVER[HTTP_HOST]$_SERVER[SCRIPT_NAME]";
 
