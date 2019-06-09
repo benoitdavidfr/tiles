@@ -25,3 +25,4 @@ phpScripts:
 phpIncludes:
 htmlFiles:
   - /geoapi/tiles/tiles.yaml
+  - /geoapi/tiles/api.yaml

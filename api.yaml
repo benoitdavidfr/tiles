@@ -1,0 +1,190 @@
+swagger: '2.0'
+info:
+  version: 0.1.0
+  description: >-
+    A tiles service
+  title: tiles geoapi
+  # put the contact info for your development or API team
+  contact:
+    email: contact@geoapi.fr
+
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+
+schemes:
+  - http
+paths:
+  /:
+    get:
+      tags: [metadata]
+      summary: Returns the list of exposed datasets and some query examples
+      operationId: serviceCapabilities
+      produces:
+        - text/html
+        - application/json
+      responses:
+        '200':
+          description: opération réussie
+  '/{dsid}':
+    get:
+      tags: [metadata]
+      summary: the dataset URI returns the dataset metadata
+      description: >-
+        the dataset URI returns the dataset metadata
+      operationId: datasetUri
+      produces:
+        - application/json
+      parameters:
+        - name: dsid
+          in: path
+          description: ID of the dataset
+          required: true
+          type: string
+      responses:
+        '200':
+          description: the dataset metadata
+          schema:
+            $ref: '#/definitions/servicemetadata'
+        '404':
+          description: no dataset corresponds to this URI
+  '/{dsid}/layers':
+    get:
+      tags: [metadata]
+      summary: list of layers
+      operationId: datasetLayers
+      produces:
+        - application/json
+      parameters:
+        - name: dsid
+          in: path
+          description: ID of the dataset
+          required: true
+          type: string
+      responses:
+        '200':
+          description: the list of layers of the dataset
+          schema:
+            $ref: '#/definitions/listOfLayers'
+        '404':
+          description: no dataset corresponds to this URI
+  '/{dsid}/layers/{lyrid}':
+    get:
+      tags: [metadata]
+      summary: layer's metadata
+      operationId: layermetadata
+      produces:
+        - application/json
+      parameters:
+        - name: dsid
+          in: path
+          description: ID of the dataset
+          required: true
+          type: string
+        - name: lyrid
+          in: path
+          description: ID of the layer
+          required: true
+          type: string
+      responses:
+        '200':
+          description: the list of layers of the dataset
+          schema:
+            $ref: '#/definitions/layermetadata'
+        '404':
+          description: no dataset corresponds to this URI
+  '/{dsid}/layers/{lyrid}/{zoom}/{x}/{y}.{fmt}':
+    get:
+      tags: [image]
+      summary: returns a tile or an Html page showing it
+      operationId: tile
+      produces:
+        - image/jpeg
+        - image/png
+        - text/html
+      parameters:
+        - name: dsid
+          in: path
+          description: ID of the dataset
+          required: true
+          type: string
+        - name: lyrid
+          in: path
+          description: ID of the layer
+          required: true
+          type: string
+        - name: zoom
+          in: path
+          description: zoom of the tile
+          required: true
+          type: integer
+        - name: x
+          in: path
+          description: x of the tile
+          required: true
+          type: integer
+        - name: y
+          in: path
+          description: y of the tile
+          required: true
+          type: integer
+        - name: fmt
+          in: path
+          description: format of the tile
+          required: true
+          type: string
+      responses:
+        '200':
+          description: the tile or an Html page showing it
+        '404':
+          description: no tile corresponds to this URL
+
+definitions:
+  servicemetadata:
+    type: object
+    description: >-
+      dataset metadata
+    properties:
+      title:
+        type: string
+      abstract:
+        type: string
+      api:
+        type: object
+        properties:
+          title:
+            type: string
+          href:
+            type: string
+      layers:
+        type: object
+        properties:
+          title:
+            type: string
+          href:
+            type: string
+  listOfLayers:
+    type: object
+    description: >-
+      list of layers
+    properties:
+      title:
+        type: string
+  layermetadata:
+    type: object
+    description: >-
+      list of layers
+    properties:
+      title:
+        type: string          
+host: tiles.geoapi.fr
+basePath: /
+# schemes:
+#  - http
+# Added by API Auto Mocking Plugin
+#host: virtserver.swaggerhub.com
+#basePath: /benoitdavidfr/tiles/1.0.0
+
+externalDocs:
+  description: Documentation of the API
+  url: https://github.com/benoitdavidfr/geoinfra

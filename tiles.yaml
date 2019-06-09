@@ -1,11 +1,11 @@
 title: fichier de paramètres du bouquet d'API tiles
 journal:
   2019-06-08: création
-entryPoints:
+datasets:
   igngp:
-    title: les tuiles du géoportail IGN
+    title: les tuiles du Géoportail IGN
     abstract: |
-      Cette API expose les tuiles exposées par le Géoportail de l'IGN.
+      Ce jeu de données correspond aux tuiles exposées par le Géoportail de l'IGN.
     licence:
       identifier: http://professionnels.ign.fr/tarifs-conditions
       title: conditions d'utilisation IGN
@@ -56,14 +56,11 @@ entryPoints:
         referer: http://benoitdavidfr.github.io/
       
 examples:
-  igngp:
-    title: les tuiles du géoportail IGN
+  - title: les tuiles du géoportail IGN
     href: /igngp
-  html:
-    title: cartes sous forme html
+  - title: cartes sous forme html
     href: /igngp/layers/cartes/6/32/22.html
-  oneTile:
-    title: une tuile de Plan IGN
+  - title: une tuile de Plan IGN
     href: /igngp/layers/plan-ign/16/32945/22940.jpg
 
 suite: |
