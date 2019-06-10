@@ -26,6 +26,8 @@ paths:
       responses:
         '200':
           description: opération réussie
+          schema:
+            $ref: '#/definitions/servicemetadata'
   '/{dsid}':
     get:
       tags: [metadata]
@@ -45,7 +47,7 @@ paths:
         '200':
           description: the dataset metadata
           schema:
-            $ref: '#/definitions/servicemetadata'
+            $ref: '#/definitions/datasetmetadata'
         '404':
           description: no dataset corresponds to this URI
   '/{dsid}/layers':
@@ -130,9 +132,10 @@ paths:
           type: integer
         - name: fmt
           in: path
-          description: format of the tile
+          description: format of the tile or html
           required: true
           type: string
+          enum: [jpg, png, html]
       responses:
         '200':
           description: the tile or an Html page showing it
@@ -143,11 +146,15 @@ definitions:
   servicemetadata:
     type: object
     description: >-
-      dataset metadata
+      service metadata
     properties:
       title:
         type: string
       abstract:
+        type: string
+      self:
+        type: string
+      version:
         type: string
       api:
         type: object
@@ -156,6 +163,57 @@ definitions:
             type: string
           href:
             type: string
+      datasets:
+        type: object
+        additionalProperties:
+          type: object
+          properties:
+            title:
+              type: string
+            href:
+              type: string
+      examples:
+        type: array
+        items:
+          type: object
+          properties:
+            title:
+              type: string
+              description: description of the example
+            href:
+              type: string
+              description: URL of the example
+  datasetmetadata:
+    type: object
+    description: >-
+      dataset metadata
+    properties:
+      title:
+        type: string
+      abstract:
+        type: string
+      licence:
+        type: object
+        properties:
+          identifier:
+            type: string
+          title:
+            type: string
+      spatial:
+        type: object
+        properties:
+          name:
+            type: string
+          westlimit:
+            type: number
+          southlimit:
+            type: number
+          eastlimit:
+            type: number
+          northlimit:
+            type: number
+      self:
+        type: string
       layers:
         type: object
         properties:
@@ -167,16 +225,31 @@ definitions:
     type: object
     description: >-
       list of layers
-    properties:
-      title:
-        type: string
+    additionalProperties:
+      type: object
+      properties:
+        title:
+          type: string
+        href:
+          type: string
   layermetadata:
     type: object
     description: >-
       list of layers
     properties:
       title:
-        type: string          
+        type: string
+      self:
+        type: string
+      abstract:
+        type: string
+      format:
+        type: string
+        enum: [image/jpeg, image/png]
+      minzoom:
+        type: integer
+      maxzoom:
+        type: integer
 host: tiles.geoapi.fr
 basePath: /
 # schemes:

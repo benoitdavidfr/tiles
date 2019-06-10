@@ -18,6 +18,11 @@ doc: |
   - seules les erreurs de logique du code génèrent un die()
   - en fonctionnement normal toutes les erreurs génèrent une erreur HTTP
 journal: |
+  10/6/2019:
+    - suppression du point /layers
+    - suppression de layers dans le path
+    - utilisation comme URI d'une couche du pattern des images
+    - amélioration du viewer Html
   9/6/2019:
     - ajout /api
   8/6/2019:
@@ -27,7 +32,7 @@ require_once __DIR__.'/../../vendor/autoload.php';
 
 use Symfony\Component\Yaml\Yaml;
 
-$version = '2019-06-08T21:00:00';
+$version = '2019-06-10T10:00:00';
 $path_info = $_SERVER['PATH_INFO'] ?? null;
 $script_path = "http://$_SERVER[HTTP_HOST]$_SERVER[SCRIPT_NAME]";
 
@@ -40,6 +45,7 @@ $mimetypes = [
 function error(int $code, array $message) {
   $headers = [
     400 => "Bad Request",
+    403 => 'Forbidden',
     404 => "Not Found",
     500 => "Internal Server Error",
     501 => "Not Implemented",
@@ -94,41 +100,31 @@ if (preg_match('!^/([^/]*)$!', $path_info, $matches)) {
     error(404, ['error'=> "Erreur $script_path/$path_info ne correspond pas à un jeu de données"]);
   
   $dataset = $params['datasets'][$dsid];
+  $layers = [];
+  foreach ($dataset['layers'] as $lyrId => $layer) {
+    $layers[$lyrId] = [
+      'title'=> $layer['title'],
+      'href'=> "$script_path$path_info/$lyrId/{z}/{x}/{y}.".($layer['format']=='image/png' ? 'png' : 'jpg'),
+    ];
+  }
+
   header('Content-type: application/json');
   die(json_encode([
     'title'=> $dataset['title'],
+    'self'=> "$script_path/$dsid",
     'abstract'=> $dataset['abstract'],
     'licence'=> $dataset['licence'],
     'spatial'=> $dataset['spatial'],
-    'self'=> "$script_path/$dsid",
-    'layers'=> ['title'=> "liste des couches", 'href'=> "$script_path/$dsid/layers"],
+    'layers'=> $layers,
   ]));
 }
 
-// "/{dsid}/layers" - liste des couches
-if (preg_match('!^/([^/]*)/layers$!', $path_info, $matches)) {
-  $dsid = $matches[1];
-  $params = Yaml::parseFile(__DIR__.'/tiles.yaml');
-  
-  if (!isset($params['datasets'][$dsid]))
-    error(404, ['error'=> "Erreur $script_path/$dsid ne correspond pas à un jeu de données"]);
-  
-  $layers = $params['datasets'][$dsid]['layers'];
-  $result = [];
-  foreach ($layers as $lyrId => $layer) {
-    $result['layers'][$lyrId] = [
-      'title'=> $layer['title'],
-      'href'=> "$script_path$path_info/$lyrId",
-    ];
-  }
-  header('Content-type: application/json');
-  die(json_encode($result, JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE));
-}
-
-// "/{dsid}/layers/{lyrId}" - une couche
-if (preg_match('!^/([^/]*)/layers/([^/]*)$!', $path_info, $matches)) {
+// "/{dsid}/{lyrId}/z/x/y.{fmt}" - une couche
+if (preg_match('!^/([^/]*)/([^/]*)(/{z}/{x}/{y})\.(jpg|png)$!', $path_info, $matches)) {
   $dsid = $matches[1];
   $lyrId = $matches[2];
+  $zxyPattern = $matches[3];
+  $fmt = $matches[3];
   $params = Yaml::parseFile(__DIR__.'/tiles.yaml');
   
   if (!isset($params['datasets'][$dsid]))
@@ -142,16 +138,17 @@ if (preg_match('!^/([^/]*)/layers/([^/]*)$!', $path_info, $matches)) {
   header('Content-type: application/json');
   die(json_encode([
     'title'=> $layer['title'],
-    'self'=> "$script_path$path_info/$lyrId",
+    'self'=> "$script_path$path_info",
     'abstract'=> $layer['abstract'],
     'format'=> $layer['format'],
     'minZoom'=> $layer['minZoom'],
     'maxZoom'=> $layer['maxZoom'],
+    'tileUrlPattern'=> "$script_path/$dsid/$lyrId/{z}/{x}/{y}.".($layer['format']=='image/png' ? 'png' : 'jpg'),
   ], JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE));
 }
 
-// "/{dsid}/layers/{lyrId}/{zoom}/{x}/{y}.{fmt}" - une tuile
-if (!preg_match('!^/([^/]*)/layers/([^/]*)/(\d*)/(\d*)/(\d*)\.(jpg|png|html)$!', $path_info, $matches))
+// "/{dsid}/layers/{lyrId}/{zoom}/{x}/{y}.{fmt}" - une tuile ou une page
+if (!preg_match('!^/([^/]*)/([^/]*)/(\d*)/(\d*)/(\d*)\.(jpg|png|html)$!', $path_info, $matches))
   error(404, ['error'=> "Erreur $script_path$path_info ne correspond pas à un point d'entrée"]);
 
 $dsid = $matches[1];
@@ -161,6 +158,9 @@ $x = $matches[4];
 $y = $matches[5];
 $format = $mimetypes[$matches[6]] ?? null;
 
+if (isset($_GET['layer'])) {
+  $lyrId = $_GET['layer'];
+}
 $params = Yaml::parseFile(__DIR__.'/tiles.yaml');
 
 if (!isset($params['datasets'][$dsid]))
@@ -171,35 +171,9 @@ if (!isset($layers[$lyrId]))
   error(404, ['error'=> "Erreur $script_path/$path_info ne correspond pas à une couche"]);
 $layer = $layers[$lyrId];
 
-function imgpath(string $path0, int $zoom, int $x, int $y, string $fmt): string {
-  return sprintf("%s/%d/%d/%d.%s", $path0, $zoom, $x, $y, $fmt);
-}
-
-function cell(string $path0, int $zoom, int $x, int $y, string $fmt) {
-  return "<td><a href='".imgpath($path0, $zoom, $x, $y, 'html')."'>"
-        ."<img src='".imgpath($path0, $zoom, $x, $y, $fmt)."'></a></td>\n";
-}
-
 if ($format == 'text/html') {
-  $path0 = "$script_path/$dsid/layers/$lyrId";
-  if ($zoom > 1)
-    echo "<a href='",imgpath($path0, $zoom-1, intdiv($x, 2), intdiv($y, 2), 'html'),"'>zoom-out</a><br>\n";
-  echo "<table><tr>\n";
-  if ($y > 1) {
-    echo cell($path0, $zoom, $x-1, $y-1, 'jpg');
-    echo cell($path0, $zoom, $x, $y-1, 'jpg');
-    echo cell($path0, $zoom, $x+1, $y-1, 'jpg');
-    echo "</tr><tr>\n";
-  }
-  echo cell($path0, $zoom, $x-1, $y, 'jpg');
-  echo "<td><a href='",imgpath($path0, $zoom+1, 2*$x+1, 2*$y+1, 'html'),"'>",
-    "<img src='",imgpath($path0, $zoom, $x, $y, 'jpg'),"'></a></td>\n";
-  echo cell($path0, $zoom, $x+1, $y, 'jpg');
-  echo "</tr><tr>\n";
-  echo cell($path0, $zoom, $x-1, $y+1, 'jpg');
-  echo cell($path0, $zoom, $x, $y+1, 'jpg');
-  echo cell($path0, $zoom, $x+1, $y+1, 'jpg');
-  echo "</tr></table>\n";
+  require_once __DIR__.'/htmlviewer.inc.php';
+  htmlViewer("$script_path/$dsid/$lyrId", $layers, $lyrId, $zoom, $x, $y);
   die();
 }
 
@@ -259,6 +233,7 @@ elseif ($layers[$lyrId]['protocol']=='WMS') { // sauf si explicitement WMS
 // Envoi des données avec mise en cache
 function sendData($format, $data) {
   $nbDaysInCache = 21;
+  $nbDaysInCache = 1/24/60; // 1'
   header('Cache-Control: max-age='.($nbDaysInCache*24*60*60)); // mise en cache pour $nbDaysInCache jours
   header('Expires: '.date('r', time() + ($nbDaysInCache*24*60*60))); // mise en cache pour $nbDaysInCache jours
   header('Last-Modified: '.date('r'));
@@ -275,10 +250,15 @@ $http_context_options = [
 $stream_context = stream_context_create(['http'=>$http_context_options]);
 if (($data = @file_get_contents($url, false, $stream_context)) !== FALSE)
   sendData($format, $data);
+else
+  $urlError = $url;
   
-if ((substr($http_response_header[0], 9, 3)=='404') && $gpname2)
+if ((substr($http_response_header[0], 9, 3)=='404') && $gpname2) {
   if (($data = @file_get_contents($url2, false, $stream_context)) !== FALSE)
     sendData($format, $data);
+  else
+    $urlError = $url2;
+}
   
 $errorCode = substr($http_response_header[0], 9, 3);
 $errorMessages = [
@@ -287,4 +267,4 @@ $errorMessages = [
   404 => 'HTTP/1.1 404 Not Found',
 ];
 $errorMessage = $errorMessages[$errorCode] ?? "HTTP/1.1 $errorCode Error";
-error($errorCode, ['error'=> $errorMessage]);
+error($errorCode, ['error'=> "$errorMessage on $urlError"]);

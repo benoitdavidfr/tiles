@@ -5,7 +5,7 @@ datasets:
   igngp:
     title: les tuiles du Géoportail IGN
     abstract: |
-      Ce jeu de données correspond aux tuiles exposées par le Géoportail de l'IGN.
+      Ce jeu de données correspond aux tuiles exposées par le Géoportail de l'IGN organisées en différentes couches.
     licence:
       identifier: http://professionnels.ign.fr/tarifs-conditions
       title: conditions d'utilisation IGN
@@ -20,6 +20,7 @@ datasets:
       eastlimit: 180
       northlimit: 90
     layers:
+      # 1) la couche cartes la plus utilisée
       cartes:
         title: Cartes
         abstract: |
@@ -30,6 +31,190 @@ datasets:
         gpnames:
           - GEOGRAPHICALGRIDSYSTEMS.MAPS.SCAN-EXPRESS.STANDARD
           - GEOGRAPHICALGRIDSYSTEMS.PLANIGN
+      error:
+        title: Erreur
+        abstract: Couches avec un nom inconnu du Géoportail permettant de tester la gestion des erreurs
+        format: image/jpeg
+        minZoom: 0
+        maxZoom: 22
+        gpname: XXX
+      # 2) les couches d'ortho-images
+      orthos:
+        title: Ortho-images
+        abstract: |
+          Des zooms 0 à 12 les [images Planet Observer](http://www.planetobserver.fr/produits/planetsat/),
+          des zooms 13 à 18 la [BD Ortho](http://professionnels.ign.fr/bdortho-50cm) et
+          des zooms 19 et 20 la [BD Ortho HR](http://professionnels.ign.fr/orthohr).
+        source:
+          - http://www.planetobserver.fr/produits/planetsat/
+          - http://professionnels.ign.fr/bdortho-50cm
+          - http://professionnels.ign.fr/orthohr
+        format: image/jpeg
+        minZoom: 0
+        maxZoom: 20
+        gpname: ORTHOIMAGERY.ORTHOPHOTOS
+      orthoshr:
+        title: Ortho-images HR
+        abstract: |
+          La [BD Ortho HR](http://professionnels.ign.fr/orthohr).
+        source: http://professionnels.ign.fr/orthohr
+        format: image/jpeg
+        minZoom: 0
+        maxZoom: 21
+        protocol: WMS
+        gpname: HR.ORTHOIMAGERY.ORTHOPHOTOS
+      ortho-express:
+        title: Ortho Express
+        abstract: |
+          L’Ortho Express est une mosaïque d’ortho-images numériques. Elle se différencie des autres produits orthophotographiques de l’IGN par le fait que, par souci de minimiser les délais de sa production, elle résulte d'un traitement massivement automatisé. L’Ortho Express vise en premier lieu à répondre à une exigence sur les délais de production. Il s’agit donc d’un produit dont les caractéristiques techniques sont contraintes par cette exigence forte.
+        source: http://professionnels.ign.fr/orthohr
+        format: image/jpeg
+        minZoom: 0
+        maxZoom: 19
+        gpname: ORTHOIMAGERY.ORTHOPHOTOS.ORTHO-EXPRESS
+      orthos2006-2010:
+        title: Ortho-images 2006-2010
+        abstract: Ortho-images 2006-2010.
+        source: http://professionnels.ign.fr/bdorthohisto
+        format: image/jpeg
+        minZoom: 0
+        maxZoom: 18
+        gpname: ORTHOIMAGERY.ORTHOPHOTOS2006-2010
+      orthos2000-2005:
+        title: Ortho-images 2000-2005
+        abstract: Ortho-images 2000-2005.
+        source: http://professionnels.ign.fr/bdorthohisto
+        format: image/jpeg
+        minZoom: 0
+        maxZoom: 18
+        gpname: ORTHOIMAGERY.ORTHOPHOTOS2000-2005
+      orthos1950-1965:
+        title: Ortho-images 1950-1965
+        abstract: Ortho-images 1950-1965.
+        source: http://professionnels.ign.fr/bdorthohisto
+        format: image/jpeg
+        minZoom: 0
+        maxZoom: 18
+        gpname: ORTHOIMAGERY.ORTHOPHOTOS1950-1965
+      spot2014:
+        title: Spot 2014
+        abstract: Mosaique d'images du satellite SPOT prises au cours de l'année 2014.
+        source: http://professionnels.ign.fr/spot
+        format: image/jpeg
+        minZoom: 0
+        maxZoom: 17
+        gpname: ORTHOIMAGERY.ORTHO-SAT.SPOT.2014
+        attribution: CNES, IGN, GEOSUD
+      spot2015:
+        title: Spot 2015
+        abstract: Mosaique d'images du satellite SPOT prises au cours de l'année 2015.
+        source: http://professionnels.ign.fr/spot
+        format: image/jpeg
+        minZoom: 0
+        maxZoom: 17
+        gpname: ORTHOIMAGERY.ORTHO-SAT.SPOT.2015
+        attribution: CIRAD, CNES, CNRS, IGN, IRD, Irstea, GEOSUD
+      spot2016:
+        title: Spot 2016
+        abstract: Mosaique d'images du satellite SPOT prises au cours de l'année 2016.
+        source: http://professionnels.ign.fr/spot
+        format: image/jpeg
+        minZoom: 0
+        maxZoom: 17
+        gpname: ORTHOIMAGERY.ORTHO-SAT.SPOT.2016
+        attribution: CIRAD, CNES, CNRS, IGN, IRD, Irstea, GEOSUD
+      spot2017:
+        title: Spot 2017
+        abstract: Mosaique d'images du satellite SPOT prises au cours de l'année 2017.
+        source: http://professionnels.ign.fr/spot
+        format: image/jpeg
+        minZoom: 0
+        maxZoom: 17
+        gpname: ORTHOIMAGERY.ORTHO-SAT.SPOT.2017
+        attribution: CIRAD, CNES, CNRS, IGN, IRD, Irstea, GEOSUD
+      spot2018:
+        title: Spot 2018
+        abstract: Mosaique d'images du satellite SPOT prises au cours de l'année 2018.
+        source: http://professionnels.ign.fr/spot
+        format: image/jpeg
+        minZoom: 0
+        maxZoom: 17
+        gpname: ORTHOIMAGERY.ORTHO-SAT.SPOT.2018
+        attribution: CIRAD, CNES, CNRS, IGN, IRD, Irstea, GEOSUD
+      pleiades2013:
+        title: Pléiades 2013
+        abstract: Images prises en 2013 avec le satellite Pléaides.
+        source: http://professionnels.ign.fr/images-pleiades
+        format: image/png
+        minZoom: 0
+        maxZoom: 18
+        gpname: ORTHOIMAGERY.ORTHO-SAT.PLEIADES.2013
+        attribution: Airbus
+      pleiades2014:
+        title: Pléiades 2014
+        abstract: Images prises en 2014 avec le satellite Pléaides.
+        source: http://professionnels.ign.fr/images-pleiades
+        format: image/png
+        minZoom: 0
+        maxZoom: 18
+        gpname: ORTHOIMAGERY.ORTHO-SAT.PLEIADES.2014
+        attribution: Airbus
+      pleiades2015:
+        title: Pléiades 2015
+        abstract: Images prises en 2015 avec le satellite Pléaides.
+        source: http://professionnels.ign.fr/images-pleiades
+        format: image/png
+        minZoom: 0
+        maxZoom: 18
+        gpname: ORTHOIMAGERY.ORTHO-SAT.PLEIADES.2015
+        attribution: Airbus
+      pleiades2016:
+        title: Pléiades 2016
+        abstract: Images prises en 2016 avec le satellite Pléaides.
+        source: http://professionnels.ign.fr/images-pleiades
+        format: image/png
+        minZoom: 0
+        maxZoom: 18
+        gpname: ORTHOIMAGERY.ORTHO-SAT.PLEIADES.2016
+        attribution: Airbus
+      pleiades2017:
+        title: Pléiades 2017
+        abstract: Images prises en 2017 avec le satellite Pléaides.
+        source: http://professionnels.ign.fr/images-pleiades
+        format: image/png
+        minZoom: 0
+        maxZoom: 18
+        gpname: ORTHOIMAGERY.ORTHO-SAT.PLEIADES.2017
+        attribution: Airbus
+      pleiades2018:
+        title: Pléiades 2018
+        abstract: Images prises en 2018 avec le satellite Pléaides.
+        source: http://professionnels.ign.fr/images-pleiades
+        format: image/png
+        minZoom: 0
+        maxZoom: 18
+        gpname: ORTHOIMAGERY.ORTHO-SAT.PLEIADES.2018
+        attribution: Airbus
+      ortho-litto2000:
+        title: Ortholittorale 2000
+        abstract: Images prises en 2018 avec le satellite Pléaides.
+        source: http://www.geolittoral.developpement-durable.gouv.fr/ortho-littorale-2000-r182.html
+        format: image/png
+        minZoom: 6
+        maxZoom: 18
+        gpname: ORTHOIMAGERY.ORTHOPHOTOS.COAST2000
+        attribution: METL, IGN
+      # 3) les cartes
+      cartes-classiques:
+        title: Cartes IGN classiques
+        # voir si partout définie
+        abstract: |
+          Cartes IGN classiques dont le dessin n'est pas complètement automatisé.
+        source: https://www.geoportail.gouv.fr/depot/fiches/cartesIGN/composition_donnee_cartes_ign.pdf
+        format: image/jpeg
+        minZoom: 6
+        maxZoom: 18
+        gpname: GEOGRAPHICALGRIDSYSTEMS.MAPS
       scan-express:
         title: SCAN Express
         abstract: |
@@ -37,9 +222,19 @@ datasets:
           facilement entre les différentes échelles (du 1 : 5 000 au 1 : 1 000 000).
         source: http://professionnels.ign.fr/pyramide-scan-express
         format: image/jpeg
-        minZoom: 6
+        minZoom: 0
         maxZoom: 18
         gpname: GEOGRAPHICALGRIDSYSTEMS.MAPS.SCAN-EXPRESS.STANDARD
+      scan-express-ng:
+        title: SCAN Express en niveaux de gris
+        abstract: |
+          La pyramide cartographique SCAN Express permet de localiser et de visualiser rapidement ses données en naviguant
+          facilement entre les différentes échelles (du 1 : 5 000 au 1 : 1 000 000).
+        source: http://professionnels.ign.fr/pyramide-scan-express
+        format: image/png
+        minZoom: 6
+        maxZoom: 18
+        gpname: GEOGRAPHICALGRIDSYSTEMS.MAPS.SCAN-EXPRESS.NIVEAUXGRIS
       plan-ign:
         title: Plan IGN
         abstract: |
@@ -54,155 +249,22 @@ datasets:
       wmts:
         url: http://wxs.ign.fr/ll0dlgs8phk2hjhmtfyqp47v/wmts
         referer: http://benoitdavidfr.github.io/
-      
+      wms:
+        url: http://wxs.ign.fr/ll0dlgs8phk2hjhmtfyqp47v/geoportail/r/wms
+        referer: http://benoitdavidfr.github.io/
+        
 examples:
   - title: les tuiles du géoportail IGN
     href: /igngp
-  - title: cartes sous forme html
-    href: /igngp/layers/cartes/6/32/22.html
+  - title: la couche cartes
+    href: /igngp/cartes/{z}/{x}/{y}.jpg
+  - title: cartes sous la forme d'une page html contenant 9 tuiles et proposant une navigation dans la couche
+    href: /igngp/cartes/6/32/22.html
   - title: une tuile de Plan IGN
-    href: /igngp/layers/plan-ign/16/32945/22940.jpg
+    href: /igngp/plan-ign/16/32945/22940.jpg
 
 suite: |
-  //  2) les couches d'ortho-images
-    'orthos'=> [
-      'gpname'=>'ORTHOIMAGERY.ORTHOPHOTOS',
-      'title'=>"Ortho-images",
-      'doc'=>[
-        '' => [ // toutes zones
-          '0'=>[
-            'max'=>12,
-            'title'=>"images Planet Observer",
-            'doc'=>"http://www.planetobserver.fr/produits/planetsat/",
-          ],
-          '13'=>[
-            'max'=>18,
-            'title'=>"BD Ortho",
-            'doc'=>"http://professionnels.ign.fr/bdortho-50cm",
-          ],
-          '19'=>[
-            'max'=>20,
-            'title'=>"Ortho HR",
-            'doc'=>"http://professionnels.ign.fr/orthohr",
-          ],
-        ],
-      ],
-      'format'=>'jpg', 'minZoom'=>0, 'maxZoom'=>20,
-    ],
-    'orthoshr'=> [
-      'protocol'=>'WMS',
-      'url'=>'http://gn.fr/KEY/geoportail/r/wms',
-      'gpname'=>'HR.ORTHOIMAGERY.ORTHOPHOTOS',
-      'title'=>"Ortho-images HR",
-      'doc'=>"http://professionnels.ign.fr/orthohr",
-      'format'=>'jpg', 'minZoom'=>0, 'maxZoom'=>21,
-    ],
-    'ortho-express'=> [
-      'gpname'=>'ORTHOIMAGERY.ORTHOPHOTOS.ORTHO-EXPRESS',
-      'title'=>"Ortho Express",
-      'abstract'=>"L’Ortho Express est une mosaïque d’ortho-images numériques. Elle se différencie des autres produits orthophotographiques de l’IGN par le fait que, par souci de minimiser les délais de sa production, elle résulte d'un traitement massivement automatisé. L’Ortho Express vise en premier lieu à répondre à une exigence sur les délais de production. Il s’agit donc d’un produit dont les caractéristiques techniques sont contraintes par cette exigence forte.",
-      'format'=>'jpg', 'minZoom'=>0, 'maxZoom'=>19,
-    ],
-    'orthos2006-2010'=> [
-      'gpname'=>'ORTHOIMAGERY.ORTHOPHOTOS2006-2010',
-      'title'=>"Ortho-images 2006-2010",
-      'doc'=>"http://professionnels.ign.fr/bdorthohisto",
-      'format'=>'jpg', 'minZoom'=>0, 'maxZoom'=>18,
-    ],
-    'orthos2000-2005'=> [
-      'gpname'=>'ORTHOIMAGERY.ORTHOPHOTOS2000-2005',
-      'title'=>"Ortho-images 2000-2005",
-      'doc'=>"http://professionnels.ign.fr/bdorthohisto",
-      'format'=>'jpg', 'minZoom'=>0, 'maxZoom'=>18,
-    ],
-    'orthos1950-1965'=> [
-      'gpname'=>'ORTHOIMAGERY.ORTHOPHOTOS.1950-1965',
-      'title'=>"Ortho-images 1950-1965",
-      'doc'=>"http://professionnels.ign.fr/bdorthohisto",
-      'format'=>'png', 'minZoom'=>0, 'maxZoom'=>18,
-    ],
-    'spot2014'=> [
-      'gpname'=>'ORTHOIMAGERY.ORTHO-SAT.SPOT.2014',
-      'title'=>"Spot 2014",
-      'doc'=>'http://professionnels.ign.fr/spot',
-      'format'=>'jpg', 'minZoom'=>0, 'maxZoom'=>17,
-      'attribution'=>"CNES, IGN, GEOSUD",
-    ],
-    'spot2015'=> [
-      'gpname'=>'ORTHOIMAGERY.ORTHO-SAT.SPOT.2015',
-      'title'=>"Spot 2015",
-      'doc'=>'http://professionnels.ign.fr/spot',
-      'format'=>'jpg', 'minZoom'=>0, 'maxZoom'=>17,
-      'attribution'=>"CIRAD, CNES, CNRS, IGN, IRD, Irstea, GEOSUD",
-    ],
-    'spot2016'=> [
-      'gpname'=>'ORTHOIMAGERY.ORTHO-SAT.SPOT.2016',
-      'title'=>"Spot 2016",
-      'doc'=>'http://professionnels.ign.fr/spot',
-      'format'=>'jpg', 'minZoom'=>0, 'maxZoom'=>17,
-      'attribution'=>"CIRAD, CNES, CNRS, IGN, IRD, Irstea, GEOSUD",
-    ],
-    'pleiades2013'=> [
-      'gpname'=>'ORTHOIMAGERY.ORTHO-SAT.PLEIADES.2013',
-      'title'=>"Pléiades 2013",
-      'doc'=>'http://professionnels.ign.fr/images-pleiades',
-      'format'=>'png', 'minZoom'=>0, 'maxZoom'=>18,
-      'attribution'=>"",
-    ],
-    'pleiades2014'=> [
-      'gpname'=>'ORTHOIMAGERY.ORTHO-SAT.PLEIADES.2014',
-      'title'=>"Pléiades 2014",
-      'doc'=>'http://professionnels.ign.fr/images-pleiades',
-      'format'=>'png', 'minZoom'=>0, 'maxZoom'=>18,
-      'attribution'=>"",
-    ],
-    'pleiades2015'=> [
-      'gpname'=>'ORTHOIMAGERY.ORTHO-SAT.PLEIADES.2015',
-      'title'=>"Pléiades 2015",
-      'doc'=>'http://professionnels.ign.fr/images-pleiades',
-      'format'=>'png', 'minZoom'=>0, 'maxZoom'=>18,
-    ],
-    'pleiades2016'=> [
-      'protocol'=>'WMS',
-      'url'=>'http://wxs.ign.fr/KEY/geoportail/r/wms',
-      'gpname'=>'ORTHOIMAGERY.ORTHO-SAT.PLEIADES.2016', 'style'=>'white_is_transparent',
-      'title'=>"Pléiades 2016",
-      'doc'=>'http://professionnels.ign.fr/images-pleiades',
-      'format'=>'png', 'minZoom'=>0, 'maxZoom'=>18,
-      'attribution'=>"",
-    ],
-    'ortho-litto2000'=> [
-      'gpname'=>'ORTHOIMAGERY.ORTHOPHOTOS.COAST2000',
-      'title'=>"Ortholittorale 2000",
-      'doc'=>'http://www.geolittoral.developpement-durable.gouv.fr/ortho-littorale-2000-r182.html',
-      'format'=>'png', 'minZoom'=>6, 'maxZoom'=>18,
-      'attribution'=>"METL, IGN",
-    ],
-  
   // 3) les cartes
-    'cartes-classiques'=> [
-      'gpname'=>'GEOGRAPHICALGRIDSYSTEMS.MAPS',
-      'title'=>"Cartes IGN classiques",
-      'doc'=>'https://www.geoportail.gouv.fr/depot/fiches/cartesIGN/composition_donnee_cartes_ign.pdf',
-      'format'=>'jpg', 'minZoom'=>0, 'maxZoom'=>18,
-      'ranges'=>[ // zmin=>[zone=>zmax]
-        0=>['wld'=>6],
-        7=>['eur'=>8,'ant'=>8,'guf'=>9],
-        9=>['fxx'=>18, 'glp'=>9, 'mtq'=>9],
-      ],
-    ],
-    'scan-express'=> [
-      'gpname'=>'GEOGRAPHICALGRIDSYSTEMS.MAPS.SCAN-EXPRESS.STANDARD',
-      'title'=>"Pyramide SCAN Express",
-      'doc'=>'http://professionnels.ign.fr/pyramide-scan-express',
-      'format'=>'jpg', 'minZoom'=>6, 'maxZoom'=>18,
-    ],
-    'scan-express-ng'=> [
-      'gpname'=>'GEOGRAPHICALGRIDSYSTEMS.MAPS.SCAN-EXPRESS.NIVEAUXGRIS',
-      'title'=>"Pyramide SCAN Express N&amp;B",
-      'doc'=>'http://professionnels.ign.fr/pyramide-scan-express',
-      'format'=>'png', 'minZoom'=>6, 'maxZoom'=>18,
-    ],
     'plan-ign'=> [
       'gpname'=>'GEOGRAPHICALGRIDSYSTEMS.PLANIGN',
       'title'=>"Pyramide Plan IGN",
