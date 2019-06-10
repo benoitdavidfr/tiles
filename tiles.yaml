@@ -19,232 +19,486 @@ datasets:
       southlimit: -90
       eastlimit: 180
       northlimit: 90
-    layers:
-      # 1) la couche cartes la plus utilisée
-      cartes:
-        title: Cartes
-        abstract: |
-          Couche constituée du Scan-Express là où il est disponible et sinon de la couche PLAN IGN (aux petites échelles)
-        format: image/jpeg
-        minZoom: 0
-        maxZoom: 18
-        gpnames:
-          - GEOGRAPHICALGRIDSYSTEMS.MAPS.SCAN-EXPRESS.STANDARD
-          - GEOGRAPHICALGRIDSYSTEMS.PLANIGN
-      error:
-        title: Erreur
-        abstract: Couches avec un nom inconnu du Géoportail permettant de tester la gestion des erreurs
-        format: image/jpeg
-        minZoom: 0
-        maxZoom: 22
-        gpname: XXX
-      # 2) les couches d'ortho-images
-      orthos:
-        title: Ortho-images
-        abstract: |
-          Des zooms 0 à 12 les [images Planet Observer](http://www.planetobserver.fr/produits/planetsat/),
-          des zooms 13 à 18 la [BD Ortho](http://professionnels.ign.fr/bdortho-50cm) et
-          des zooms 19 et 20 la [BD Ortho HR](http://professionnels.ign.fr/orthohr).
-        source:
-          - http://www.planetobserver.fr/produits/planetsat/
-          - http://professionnels.ign.fr/bdortho-50cm
-          - http://professionnels.ign.fr/orthohr
-        format: image/jpeg
-        minZoom: 0
-        maxZoom: 20
-        gpname: ORTHOIMAGERY.ORTHOPHOTOS
-      orthoshr:
-        title: Ortho-images HR
-        abstract: |
-          La [BD Ortho HR](http://professionnels.ign.fr/orthohr).
-        source: http://professionnels.ign.fr/orthohr
-        format: image/jpeg
-        minZoom: 0
-        maxZoom: 21
-        protocol: WMS
-        gpname: HR.ORTHOIMAGERY.ORTHOPHOTOS
-      ortho-express:
-        title: Ortho Express
-        abstract: |
-          L’Ortho Express est une mosaïque d’ortho-images numériques. Elle se différencie des autres produits orthophotographiques de l’IGN par le fait que, par souci de minimiser les délais de sa production, elle résulte d'un traitement massivement automatisé. L’Ortho Express vise en premier lieu à répondre à une exigence sur les délais de production. Il s’agit donc d’un produit dont les caractéristiques techniques sont contraintes par cette exigence forte.
-        source: http://professionnels.ign.fr/orthohr
-        format: image/jpeg
-        minZoom: 0
-        maxZoom: 19
-        gpname: ORTHOIMAGERY.ORTHOPHOTOS.ORTHO-EXPRESS
-      orthos2006-2010:
-        title: Ortho-images 2006-2010
-        abstract: Ortho-images 2006-2010.
-        source: http://professionnels.ign.fr/bdorthohisto
-        format: image/jpeg
-        minZoom: 0
-        maxZoom: 18
-        gpname: ORTHOIMAGERY.ORTHOPHOTOS2006-2010
-      orthos2000-2005:
-        title: Ortho-images 2000-2005
-        abstract: Ortho-images 2000-2005.
-        source: http://professionnels.ign.fr/bdorthohisto
-        format: image/jpeg
-        minZoom: 0
-        maxZoom: 18
-        gpname: ORTHOIMAGERY.ORTHOPHOTOS2000-2005
-      orthos1950-1965:
-        title: Ortho-images 1950-1965
-        abstract: Ortho-images 1950-1965.
-        source: http://professionnels.ign.fr/bdorthohisto
-        format: image/jpeg
-        minZoom: 0
-        maxZoom: 18
-        gpname: ORTHOIMAGERY.ORTHOPHOTOS1950-1965
-      spot2014:
-        title: Spot 2014
-        abstract: Mosaique d'images du satellite SPOT prises au cours de l'année 2014.
-        source: http://professionnels.ign.fr/spot
-        format: image/jpeg
-        minZoom: 0
-        maxZoom: 17
-        gpname: ORTHOIMAGERY.ORTHO-SAT.SPOT.2014
-        attribution: CNES, IGN, GEOSUD
-      spot2015:
-        title: Spot 2015
-        abstract: Mosaique d'images du satellite SPOT prises au cours de l'année 2015.
-        source: http://professionnels.ign.fr/spot
-        format: image/jpeg
-        minZoom: 0
-        maxZoom: 17
-        gpname: ORTHOIMAGERY.ORTHO-SAT.SPOT.2015
-        attribution: CIRAD, CNES, CNRS, IGN, IRD, Irstea, GEOSUD
-      spot2016:
-        title: Spot 2016
-        abstract: Mosaique d'images du satellite SPOT prises au cours de l'année 2016.
-        source: http://professionnels.ign.fr/spot
-        format: image/jpeg
-        minZoom: 0
-        maxZoom: 17
-        gpname: ORTHOIMAGERY.ORTHO-SAT.SPOT.2016
-        attribution: CIRAD, CNES, CNRS, IGN, IRD, Irstea, GEOSUD
-      spot2017:
-        title: Spot 2017
-        abstract: Mosaique d'images du satellite SPOT prises au cours de l'année 2017.
-        source: http://professionnels.ign.fr/spot
-        format: image/jpeg
-        minZoom: 0
-        maxZoom: 17
-        gpname: ORTHOIMAGERY.ORTHO-SAT.SPOT.2017
-        attribution: CIRAD, CNES, CNRS, IGN, IRD, Irstea, GEOSUD
-      spot2018:
-        title: Spot 2018
-        abstract: Mosaique d'images du satellite SPOT prises au cours de l'année 2018.
-        source: http://professionnels.ign.fr/spot
-        format: image/jpeg
-        minZoom: 0
-        maxZoom: 17
-        gpname: ORTHOIMAGERY.ORTHO-SAT.SPOT.2018
-        attribution: CIRAD, CNES, CNRS, IGN, IRD, Irstea, GEOSUD
-      pleiades2013:
-        title: Pléiades 2013
-        abstract: Images prises en 2013 avec le satellite Pléaides.
-        source: http://professionnels.ign.fr/images-pleiades
-        format: image/png
-        minZoom: 0
-        maxZoom: 18
-        gpname: ORTHOIMAGERY.ORTHO-SAT.PLEIADES.2013
-        attribution: Airbus
-      pleiades2014:
-        title: Pléiades 2014
-        abstract: Images prises en 2014 avec le satellite Pléaides.
-        source: http://professionnels.ign.fr/images-pleiades
-        format: image/png
-        minZoom: 0
-        maxZoom: 18
-        gpname: ORTHOIMAGERY.ORTHO-SAT.PLEIADES.2014
-        attribution: Airbus
-      pleiades2015:
-        title: Pléiades 2015
-        abstract: Images prises en 2015 avec le satellite Pléaides.
-        source: http://professionnels.ign.fr/images-pleiades
-        format: image/png
-        minZoom: 0
-        maxZoom: 18
-        gpname: ORTHOIMAGERY.ORTHO-SAT.PLEIADES.2015
-        attribution: Airbus
-      pleiades2016:
-        title: Pléiades 2016
-        abstract: Images prises en 2016 avec le satellite Pléaides.
-        source: http://professionnels.ign.fr/images-pleiades
-        format: image/png
-        minZoom: 0
-        maxZoom: 18
-        gpname: ORTHOIMAGERY.ORTHO-SAT.PLEIADES.2016
-        attribution: Airbus
-      pleiades2017:
-        title: Pléiades 2017
-        abstract: Images prises en 2017 avec le satellite Pléaides.
-        source: http://professionnels.ign.fr/images-pleiades
-        format: image/png
-        minZoom: 0
-        maxZoom: 18
-        gpname: ORTHOIMAGERY.ORTHO-SAT.PLEIADES.2017
-        attribution: Airbus
-      pleiades2018:
-        title: Pléiades 2018
-        abstract: Images prises en 2018 avec le satellite Pléaides.
-        source: http://professionnels.ign.fr/images-pleiades
-        format: image/png
-        minZoom: 0
-        maxZoom: 18
-        gpname: ORTHOIMAGERY.ORTHO-SAT.PLEIADES.2018
-        attribution: Airbus
-      ortho-litto2000:
-        title: Ortholittorale 2000
-        abstract: Images prises en 2018 avec le satellite Pléaides.
-        source: http://www.geolittoral.developpement-durable.gouv.fr/ortho-littorale-2000-r182.html
-        format: image/png
-        minZoom: 6
-        maxZoom: 18
-        gpname: ORTHOIMAGERY.ORTHOPHOTOS.COAST2000
-        attribution: METL, IGN
-      # 3) les cartes
-      cartes-classiques:
-        title: Cartes IGN classiques
-        # voir si partout définie
-        abstract: |
-          Cartes IGN classiques dont le dessin n'est pas complètement automatisé.
-        source: https://www.geoportail.gouv.fr/depot/fiches/cartesIGN/composition_donnee_cartes_ign.pdf
-        format: image/jpeg
-        minZoom: 6
-        maxZoom: 18
-        gpname: GEOGRAPHICALGRIDSYSTEMS.MAPS
-      scan-express:
-        title: SCAN Express
-        abstract: |
-          La pyramide cartographique SCAN Express permet de localiser et de visualiser rapidement ses données en naviguant
-          facilement entre les différentes échelles (du 1 : 5 000 au 1 : 1 000 000).
-        source: http://professionnels.ign.fr/pyramide-scan-express
-        format: image/jpeg
-        minZoom: 0
-        maxZoom: 18
-        gpname: GEOGRAPHICALGRIDSYSTEMS.MAPS.SCAN-EXPRESS.STANDARD
-      scan-express-ng:
-        title: SCAN Express en niveaux de gris
-        abstract: |
-          La pyramide cartographique SCAN Express permet de localiser et de visualiser rapidement ses données en naviguant
-          facilement entre les différentes échelles (du 1 : 5 000 au 1 : 1 000 000).
-        source: http://professionnels.ign.fr/pyramide-scan-express
-        format: image/png
-        minZoom: 6
-        maxZoom: 18
-        gpname: GEOGRAPHICALGRIDSYSTEMS.MAPS.SCAN-EXPRESS.NIVEAUXGRIS
-      plan-ign:
-        title: Plan IGN
-        abstract: |
-          Plan IGN permet de naviguer en France, sur tout le territoire métropolitain et une partie des DOM,
-          à toutes les échelles.
-        source: http://professionnels.ign.fr/plan-ign
-        format: image/jpeg
-        minZoom: 0
-        maxZoom: 18
-        gpname: GEOGRAPHICALGRIDSYSTEMS.PLANIGN
+    layersByGroup:
+      lesPlusUtilisées: # 1) la couche cartes la plus utilisée
+        cartes:
+          title: Cartes
+          abstract: |
+            Couche constituée du Scan-Express là où il est disponible et sinon de la couche PLAN IGN (aux petites échelles)
+          format: image/jpeg
+          minZoom: 0
+          maxZoom: 18
+          gpnames:
+            - GEOGRAPHICALGRIDSYSTEMS.MAPS.SCAN-EXPRESS.STANDARD
+            - GEOGRAPHICALGRIDSYSTEMS.PLANIGN
+        error:
+          title: Erreur
+          abstract: Couches avec un nom inconnu du Géoportail permettant de tester la gestion des erreurs
+          format: image/jpeg
+          minZoom: 0
+          maxZoom: 22
+          gpname: XXX
+      ortho-images: # 2) les couches d'ortho-images
+        orthos:
+          title: Ortho-images
+          abstract: |
+            Des zooms 0 à 12 les [images Planet Observer](http://www.planetobserver.fr/produits/planetsat/),
+            des zooms 13 à 18 la [BD Ortho](http://professionnels.ign.fr/bdortho-50cm) et
+            des zooms 19 et 21 la [BD Ortho HR](http://professionnels.ign.fr/orthohr).
+          source:
+            - http://www.planetobserver.fr/produits/planetsat/
+            - http://professionnels.ign.fr/bdortho-50cm
+            - http://professionnels.ign.fr/orthohr
+          format: image/jpeg
+          minZoom: 0
+          maxZoom: 21
+          gpname: ORTHOIMAGERY.ORTHOPHOTOS
+        orthos-irc:
+          title: BDORTHO en infrarouge fausses couleurs
+          abstract: BDORTHO en infrarouge fausses couleurs.
+          source: http://professionnels.ign.fr/bdortho-50cm
+          format: image/jpeg
+          minZoom: 0
+          maxZoom: 19
+          gpname: ORTHOIMAGERY.ORTHOPHOTOS.IRC
+        orthoshr:
+          title: Ortho-images HR
+          abstract: |
+            La [BD Ortho HR](http://professionnels.ign.fr/orthohr).
+          source: http://professionnels.ign.fr/orthohr
+          format: image/jpeg
+          minZoom: 1
+          maxZoom: 21
+          protocol: WMS
+          gpname: HR.ORTHOIMAGERY.ORTHOPHOTOS
+        ortho-express:
+          title: Ortho Express
+          abstract: |
+            L’Ortho Express est une mosaïque d’ortho-images numériques. Elle se différencie des autres produits orthophotographiques de l’IGN par le fait que, par souci de minimiser les délais de sa production, elle résulte d'un traitement massivement automatisé. L’Ortho Express vise en premier lieu à répondre à une exigence sur les délais de production. Il s’agit donc d’un produit dont les caractéristiques techniques sont contraintes par cette exigence forte.
+          source: http://professionnels.ign.fr/orthohr
+          format: image/jpeg
+          minZoom: 0
+          maxZoom: 19
+          gpname: ORTHOIMAGERY.ORTHOPHOTOS.ORTHO-EXPRESS
+        orthos2006-2010:
+          title: Photographies aériennes 2006-2010
+          abstract: Prises de vues aériennes des territoires disponibles à la fin des années 2006 à 2010.
+          source: http://professionnels.ign.fr/bdorthohisto
+          format: image/jpeg
+          minZoom: 0
+          maxZoom: 18
+          gpname: ORTHOIMAGERY.ORTHOPHOTOS2006-2010
+        orthos2000-2005:
+          title: Photographies aériennes 2000-2005
+          abstract: Prises de vues aériennes des territoires pour les années 2000 à 2005.
+          source: http://professionnels.ign.fr/bdorthohisto
+          format: image/jpeg
+          minZoom: 0
+          maxZoom: 18
+          gpname: ORTHOIMAGERY.ORTHOPHOTOS2000-2005
+        orthos1950-1965:
+          title: Photographies aériennes historiques 1950-1965
+          abstract: |
+            Couverture en photographies aériennes de la France des années 50, telle qu'elle se présentait avant les grands aménagements des années 60. Cette couverture a été réalisée à partir des photographies aériennes historiques numérisées par l'IGN. Elle est disponible sur la France métropolitaine, les départements et régions d'Outre-Mer (la Guyane n'est que partiellement couverte) et les collectivités d'Outre-Mer sauf la Polynésie française. Les photographies sont orthorectifiées, c'est-à-dire corrigées des déformations dues à la prise de vue et au relief du terrain, et assemblées pour fournir une visualisation continue superposable avec le Référentiel à Grande Echelle (RGE®) ou les cartes.
+          source: http://professionnels.ign.fr/bdorthohisto
+          format: image/png
+          minZoom: 0
+          maxZoom: 18
+          gpname: ORTHOIMAGERY.ORTHOPHOTOS.1950-1965
+        spot2014:
+          title: Spot 2014
+          abstract: Mosaique d'images du satellite SPOT prises au cours de l'année 2014.
+          source: http://professionnels.ign.fr/spot
+          format: image/jpeg
+          minZoom: 0
+          maxZoom: 17
+          gpname: ORTHOIMAGERY.ORTHO-SAT.SPOT.2014
+          attribution: CNES, IGN, GEOSUD
+        spot2015:
+          title: Spot 2015
+          abstract: Mosaique d'images du satellite SPOT prises au cours de l'année 2015.
+          source: http://professionnels.ign.fr/spot
+          format: image/jpeg
+          minZoom: 0
+          maxZoom: 17
+          gpname: ORTHOIMAGERY.ORTHO-SAT.SPOT.2015
+          attribution: CIRAD, CNES, CNRS, IGN, IRD, Irstea, GEOSUD
+        spot2016:
+          title: Spot 2016
+          abstract: Mosaique d'images du satellite SPOT prises au cours de l'année 2016.
+          source: http://professionnels.ign.fr/spot
+          format: image/jpeg
+          minZoom: 0
+          maxZoom: 17
+          gpname: ORTHOIMAGERY.ORTHO-SAT.SPOT.2016
+          attribution: CIRAD, CNES, CNRS, IGN, IRD, Irstea, GEOSUD
+        spot2017:
+          title: Spot 2017
+          abstract: Mosaique d'images du satellite SPOT prises au cours de l'année 2017.
+          source: http://professionnels.ign.fr/spot
+          format: image/jpeg
+          minZoom: 0
+          maxZoom: 17
+          gpname: ORTHOIMAGERY.ORTHO-SAT.SPOT.2017
+          attribution: CIRAD, CNES, CNRS, IGN, IRD, Irstea, GEOSUD
+        spot2018:
+          title: Spot 2018
+          abstract: Mosaique d'images du satellite SPOT prises au cours de l'année 2018.
+          source: http://professionnels.ign.fr/spot
+          format: image/jpeg
+          minZoom: 0
+          maxZoom: 17
+          gpname: ORTHOIMAGERY.ORTHO-SAT.SPOT.2018
+          attribution: CIRAD, CNES, CNRS, IGN, IRD, Irstea, GEOSUD
+        pleiades2013:
+          title: Pléiades 2013
+          abstract: Images prises en 2013 avec le satellite Pléaides.
+          source: http://professionnels.ign.fr/images-pleiades
+          format: image/png
+          minZoom: 0
+          maxZoom: 18
+          gpname: ORTHOIMAGERY.ORTHO-SAT.PLEIADES.2013
+          attribution: Airbus
+        pleiades2014:
+          title: Pléiades 2014
+          abstract: Images prises en 2014 avec le satellite Pléaides.
+          source: http://professionnels.ign.fr/images-pleiades
+          format: image/png
+          minZoom: 0
+          maxZoom: 18
+          gpname: ORTHOIMAGERY.ORTHO-SAT.PLEIADES.2014
+          attribution: Airbus
+        pleiades2015:
+          title: Pléiades 2015
+          abstract: Images prises en 2015 avec le satellite Pléaides.
+          source: http://professionnels.ign.fr/images-pleiades
+          format: image/png
+          minZoom: 0
+          maxZoom: 18
+          gpname: ORTHOIMAGERY.ORTHO-SAT.PLEIADES.2015
+          attribution: Airbus
+        pleiades2016:
+          title: Pléiades 2016
+          abstract: Images prises en 2016 avec le satellite Pléaides.
+          source: http://professionnels.ign.fr/images-pleiades
+          format: image/png
+          minZoom: 0
+          maxZoom: 18
+          gpname: ORTHOIMAGERY.ORTHO-SAT.PLEIADES.2016
+          attribution: Airbus
+        pleiades2017:
+          title: Pléiades 2017
+          abstract: Images prises en 2017 avec le satellite Pléaides.
+          source: http://professionnels.ign.fr/images-pleiades
+          format: image/png
+          minZoom: 0
+          maxZoom: 18
+          gpname: ORTHOIMAGERY.ORTHO-SAT.PLEIADES.2017
+          attribution: Airbus
+        pleiades2018:
+          title: Pléiades 2018
+          abstract: Images prises en 2018 avec le satellite Pléaides.
+          source: http://professionnels.ign.fr/images-pleiades
+          format: image/png
+          minZoom: 0
+          maxZoom: 18
+          gpname: ORTHOIMAGERY.ORTHO-SAT.PLEIADES.2018
+          attribution: Airbus
+        ortho-litto2000:
+          title: Ortholittorale 2000
+          abstract: |
+            Orthophotographies du littoral des côtes de la mer du Nord, de la Manche et de l'Atlantique.
+          source: http://www.geolittoral.developpement-durable.gouv.fr/ortho-littorale-2000-r182.html
+          format: image/png
+          minZoom: 6
+          maxZoom: 18
+          gpname: ORTHOIMAGERY.ORTHOPHOTOS.COAST2000
+          attribution: METL, IGN
+      cartes: # 3) les cartes
+        cartes-classiques:
+          title: Cartes IGN classiques
+          # voir si partout définie
+          abstract: |
+            Cartes IGN classiques dont le dessin n'est pas complètement automatisé.
+          source: https://www.geoportail.gouv.fr/depot/fiches/cartesIGN/composition_donnee_cartes_ign.pdf
+          format: image/jpeg
+          minZoom: 6
+          maxZoom: 18
+          gpname: GEOGRAPHICALGRIDSYSTEMS.MAPS
+        scan-express:
+          title: SCAN Express
+          abstract: |
+            SCAN Express est une pyramide cartographique multi-échelles bien actualisée, uniforme, continue et géoréférencée
+            qui permet de localiser et visualiser rapidement des données en naviguant facilement entre les différentes échelles.
+            Cette pyramide couvre les échelles du 1 : 1 000 000 au 1 : 5 000 avec des représentations cartographiques homogènes
+            et adaptées à chaque niveau de zoom.
+          source: http://professionnels.ign.fr/pyramide-scan-express
+          format: image/jpeg
+          minZoom: 0
+          maxZoom: 18
+          gpname: GEOGRAPHICALGRIDSYSTEMS.MAPS.SCAN-EXPRESS.STANDARD
+        scan-express-ng:
+          title: SCAN Express en niveaux de gris
+          abstract: |
+            La pyramide cartographique SCAN Express permet de localiser et de visualiser rapidement ses données en naviguant
+            facilement entre les différentes échelles (du 1 : 5 000 au 1 : 1 000 000).
+          source: http://professionnels.ign.fr/pyramide-scan-express
+          format: image/png
+          minZoom: 6
+          maxZoom: 18
+          gpname: GEOGRAPHICALGRIDSYSTEMS.MAPS.SCAN-EXPRESS.NIVEAUXGRIS
+        plan-ign:
+          title: Plan IGN
+          abstract: Représentation graphique des bases de données IGN.
+          source: http://professionnels.ign.fr/plan-ign
+          format: image/jpeg
+          minZoom: 0
+          maxZoom: 18
+          gpname: GEOGRAPHICALGRIDSYSTEMS.PLANIGN
+        plan-ign-j1:
+          title: Plan IGN J+1
+          abstract: |
+            Plan IGN J+1 est une représentation graphique grande échelle de la base de donnée de production du Référentiel
+            à Grande Echelle (RGE) de l’IGN. Elle est mise à jour quotidiennement.
+          source: http://professionnels.ign.fr/plan-ign
+          format: image/jpeg
+          minZoom: 0
+          maxZoom: 18
+          gpname: GEOGRAPHICALGRIDSYSTEMS.MAPS.BDUNI.J1
+        scanlitto:
+          title: SCAN Littoral
+          abstract: |
+            Le SCAN Littoral® est une collection d’images cartographiques numériques continues du littoral. Le SCAN Littoral®
+            résulte de la fusion intelligente des cartes marines du SHOM et du SCAN 25® de l'IGN.
+          source: http://professionnels.ign.fr/scanlitto
+          format: image/jpeg
+          minZoom: 0
+          maxZoom: 16
+          protocol: WMS
+          gpname: SCANLITTO_PYR-JPEG_WLD_WM
+          attribution: IGN, Shom
+        scanoaci:
+          title: carte OACI-VFR
+          abstract: |
+            Les cartes OACI (Organisation de l'aviation civile internationale) ont été conçues pour le vol à vue
+            (VFR : Visual Flights Rules). Elles proposent des informations aéronautiques fournies par le Service de
+            l'information aéronautique (SIA) de la Direction générale de l'aviation civile (DGAC).
+          source: http://professionnels.ign.fr/scanoaci
+          format: image/jpeg
+          minZoom: 6
+          maxZoom: 11
+          gpname: GEOGRAPHICALGRIDSYSTEMS.MAPS.SCAN-OACI
+          attribution: IGN, DGAC/SIA
+        scan50-1950:
+          title: Cartes 1:50.000 des années 1950
+          abstract: Assemblage des cartes au 1:50.000 des années 1950 sur la France métropolitaine.
+          source: http://professionnels.ign.fr/scanhisto
+          format: image/jpeg
+          minZoom: 3
+          maxZoom: 15
+          gpname: GEOGRAPHICALGRIDSYSTEMS.MAPS.SCAN50.1950
+        cartes-etatmajor40:
+          title: Carte de l'état-major (1820-1866)
+          abstract: Assemblage des cartes de l'état-major des années 1820-1866 au 1:40.000 sur la France métropolitaine.
+          source: http://professionnels.ign.fr/scanhisto
+          format: image/jpeg
+          minZoom: 6
+          maxZoom: 15
+          gpname: GEOGRAPHICALGRIDSYSTEMS.ETATMAJOR40
+        cartes-etatmajor10:
+          title: Carte des environs de Paris (1818-1824)
+          abstract: "Carte des environs de Paris au 1:10.000 établie entre 1818 et 1824."
+          source: http://professionnels.ign.fr/scanhisto
+          format: image/jpeg
+          minZoom: 6
+          maxZoom: 16
+          gpname: GEOGRAPHICALGRIDSYSTEMS.ETATMAJOR10
+        carte-paris-1906:
+          title: Carte de Paris de 1906
+          abstract: Carte de Paris de 1906.
+          source: http://professionnels.ign.fr/scanhisto
+          format: image/jpeg
+          minZoom: 10
+          maxZoom: 15
+          gpname: GEOGRAPHICALGRIDSYSTEMS.1900TYPEMAPS
+        carte-guyane-bonne:
+          title: Carte de Guyane (1780 - Col. Bonne)
+          abstract: |
+            Carte de Guyane française établie par M. Bonne, Ingénieur-Hydrographe de la Marine. Cette carte figure dans ‘L’atlas de toutes les parties connues du globe terrestre’, ouvrage rédigé par l’abbé Guillaume-Thomas RAYNAL et publié à Genève en 1780.
+          source: http://professionnels.ign.fr/scanhisto
+          format: image/jpeg
+          minZoom: 0
+          maxZoom: 10
+          gpname: GEOGRAPHICALGRIDSYSTEMS.BONNE
+      mnt: # 4) couches produites à partir du MNT
+        teintes-hypsometriques:
+          title: MNT BD Alti affiché en teintes hypsométriques
+          abstract: |
+            Modèle Numérique de Terrain (MNT) issu de la BD ALTI® affiché en teintes hypsométriques.
+          source: http://professionnels.ign.fr/bdalti
+          format: image/jpeg
+          minZoom: 6
+          maxZoom: 14
+          gpname: ELEVATION.SLOPES
+        pentes:
+          title: Carte des pentes
+          abstract: |
+            Carte des zones ayant une valeur de pente supérieure à 30°-35°-40°-45° d'après la BD ALTI au pas de 5m.
+          source: http://professionnels.ign.fr/bdalti
+          format: image/png
+          minZoom: 0
+          maxZoom: 17
+          gpname: GEOGRAPHICALGRIDSYSTEMS.SLOPES.MOUNTAIN
+        estompage:
+          title: Estompage
+          abstract: |
+            Couche d'ombrage calculée à partir des données altimétriques de l'IGN permettant de mieux appréhender le relief.
+            L'estompage proposé est réalisé à partir des données MNT BDAlti au pas de 25m avec deux soleils :
+            un au nord-est de hauteur 45°, l'autre zénithal.
+          source: http://professionnels.ign.fr/bdalti
+          format: image/png
+          minZoom: 0
+          maxZoom: 16
+          protocol: WMS
+          gpname: ELEVATION.ELEVATIONGRIDCOVERAGE.SHADOW
+      ocs-ge: # 5) OCS-GE
+        ocsge-couverture:
+          title: OCSGE - Couverture
+          abstract: |
+            Le produit "Occupation du sol à grande échelle (OCSGE)" est une base de données décrivant l’occupation du sol.
+            La  couverture  du  sol  est  une  vue  « physionomique »  du  terrain.  La  description  est  une  simple 
+            distinction  des  éléments  structurant  le  paysage  sans  préjuger  de leur  fonction 
+            ou  de  leur  spécificité  macroscopique.
+          source: http://professionnels.ign.fr/ocsge
+          format: image/png
+          minZoom: 6
+          maxZoom: 16
+          gpname: OCSGE.COUVERTURE
+        ocsge-usage:
+          title: OCSGE - Usage
+          abstract: |
+            Le produit "Occupation du sol à grande échelle (OCSGE)" est une base de données décrivant l’occupation du sol.
+            L’usage  du  sol  est  une  vue  « anthropique  du  sol ».  Il  est  partagé  en  fonction  du  rôle  que  jouent 
+            les  portions de terrain en tant qu’activité économique.
+          source: http://professionnels.ign.fr/ocsge
+          format: image/png
+          minZoom: 6
+          maxZoom: 16
+          gpname: OCSGE.USAGE
+        ocsge-constructions:
+          title: OCSGE - Constructions
+          abstract: |
+            Le produit "Occupation du sol à grande échelle (OCSGE)" est une base de données décrivant l’occupation du sol.
+            La couche Constructions englobe les zones bâties et leur environnement proche. Cette couche permet de focaliser
+            sur des zones évolutives, donc à enjeu d’un point de vue de l’aménagement du territoire.
+            Elle permet de distinguer les espaces construits, définis sur une base bâtie, des terrains naturels, agricoles,
+            forestiers et espaces aménagés isolés non bâtis.
+          source: http://professionnels.ign.fr/ocsge
+          format: image/png
+          minZoom: 6
+          maxZoom: 16
+          gpname: OCSGE.CONSTRUCTIONS
+      objets-vecteurs: # 6) diverses couches vecteur dans l'ordre logique d'affichage
+        aerodromes:
+          title: Aérodromes
+          abstract: Localisation des aéroports, aérodromes et héliports, des pistes, bâtiments et équipements dédiés.
+          source: http://professionnels.ign.fr/bddvecteur
+          format: image/png
+          minZoom: 6
+          maxZoom: 18
+          gpname: TRANSPORTNETWORKS.RUNWAYS
+        hydrographie:
+          title: Hydrographie
+          abstract: Lacs, réservoirs, rivières et cours d'eau.
+          source: http://professionnels.ign.fr/bddvecteur
+          format: image/png
+          minZoom: 6
+          maxZoom: 18
+          gpname: HYDROGRAPHY.HYDROGRAPHY
+        histolitt:
+          title: Trait de côte Histolitt
+          abstract: |
+            Produit par le Shom et l'IGN, ce trait de côte correspond à la laisse des plus hautes mers dans le cas d'une marée
+            astronomique de coefficient 120 et dans des conditions météorologiques normales (pas de vent du large, pas de
+            dépression atmosphérique susceptible d'élever le niveau de la mer).
+          source: https://diffusion.shom.fr/loisirs/trait-de-cote-histolittr.html
+          format: image/png
+          minZoom: 6
+          maxZoom: 18
+          gpname: ELEVATION.LEVEL0
+          attribution: IGN, Shom
+        ferroviaire:
+          title: Réseau ferroviaire
+          abstract: |
+            Réseau ferroviaire français et européen.
+          source: http://professionnels.ign.fr/bddvecteur
+          format: image/png
+          minZoom: 6
+          maxZoom: 18
+          gpname: TRANSPORTNETWORKS.RAILWAYS
+        batiments:
+          title: Bâtiments
+          abstract: Délimitation des zones bâties pour les zoom 6 à 14 et des bâtiments individuels pour les zones 15 à 18.
+          source: http://professionnels.ign.fr/bddvecteur
+          format: image/png
+          minZoom: 6
+          maxZoom: 18
+          gpname: BUILDINGS.BUILDINGS
+        routes:
+          title: Routes
+          abstract: réseau routier français et européen.
+          source: http://professionnels.ign.fr/bddvecteur
+          format: image/png
+          minZoom: 6
+          maxZoom: 18
+          gpname: TRANSPORTNETWORKS.ROADS
+        lignes-electriques:
+          title: Lignes électriques
+          abstract: Lignes électriques.
+          source: http://professionnels.ign.fr/bddvecteur
+          format: image/png
+          minZoom: 6
+          maxZoom: 18
+          gpname: UTILITYANDGOVERNMENTALSERVICES.ALL
+        limites-administratives:
+          title: Limites administratives
+          abstract: Limites des régions, départements, cantons et communes.
+          source: http://professionnels.ign.fr/bddvecteur
+          format: image/png
+          minZoom: 6
+          maxZoom: 18
+          gpname: ADMINISTRATIVEUNITS.BOUNDARIES
+        parcelles-cadastrales:
+          title: Parcelles cadastrales (non actualisées) (orange)
+          abstract: |
+            Parcelles cadastrales (orange). Version figée en 2018.
+          source: http://professionnels.ign.fr/bdparcellaire
+          format: image/png
+          minZoom: 0
+          maxZoom: 20
+          gpname: CADASTRALPARCELS.PARCELS
+          style: bdparcellaire_o
+          attribution: DGFiP, IGN
+        parcellaire-express:
+          title: PCI vecteur
+          abstract: |
+            Plan cadastral informatisé vecteur de la DGFIP.
+          source: https://geoservices.ign.fr/blog/2018/11/13/lancement_PCI.html
+          format: image/png
+          minZoom: 6
+          maxZoom: 19
+          gpname: CADASTRALPARCELS.PARCELLAIRE_EXPRESS
+          style: PCI vecteur
+          attribution: DGFiP, IGN
+        toponymes:
+          title: Dénominations géographiques
+          abstract: Noms des villes, villages, lieux-dits ...
+          source: http://professionnels.ign.fr/bddvecteur
+          format: image/png
+          minZoom: 6
+          maxZoom: 18
+          gpname: GEOGRAPHICALNAMES.NAMES
+
     distribution:
       wmts:
         url: http://wxs.ign.fr/ll0dlgs8phk2hjhmtfyqp47v/wmts
@@ -258,183 +512,244 @@ examples:
     href: /igngp
   - title: la couche cartes
     href: /igngp/cartes/{z}/{x}/{y}.jpg
-  - title: cartes sous la forme d'une page html contenant 9 tuiles et proposant une navigation dans la couche
+  - title: cartes de la métropole sous la forme d'une page html contenant 9 tuiles et proposant une navigation
     href: /igngp/cartes/6/32/22.html
   - title: une tuile de Plan IGN
     href: /igngp/plan-ign/16/32945/22940.jpg
+  - title: Cartes sur la Guyane
+    href: /igngp/cartes/8/90/125.html
+  - title: Cartes des Antilles
+    href: /igngp/cartes/8/84/116.html
+  - title: Cartes de La Réunion et de Mayotte
+    href: /igngp/cartes/6/40/35.html
 
-suite: |
-  // 3) les cartes
-    'plan-ign'=> [
-      'gpname'=>'GEOGRAPHICALGRIDSYSTEMS.PLANIGN',
-      'title'=>"Pyramide Plan IGN",
-      'doc'=>'http://professionnels.ign.fr/plan-ign',
-      'format'=>'jpg', 'minZoom'=>0, 'maxZoom'=>18,
-    ],
-    'carte-littorale'=> [
-      'protocol'=>'WMS',
-      'url'=>'http://wxs.ign.fr/KEY/geoportail/r/wms',
-      'gpname'=>'SCANLITTO_PYR-JPEG_WLD_WM', 'style'=>'normal',
-      'title'=>"Carte littorale",
-      'doc'=>'http://professionnels.ign.fr/scanlitto',
-      'format'=>'png', 'minZoom'=>0, 'maxZoom'=>18,
-      'attribution'=>"&copy; <a href='http://www.ign.fr'>IGN</a>, &copy; <a href='http://data.shom.fr'>SHOM</a>",
-    ],
-    'cartes-oaci'=> [
-      'gpname'=>'GEOGRAPHICALGRIDSYSTEMS.MAPS.SCAN-OACI',
-      'title'=>"carte OACI-VFR 2016",
-      'doc'=>'http://professionnels.ign.fr/scanoaci',
-      'format'=>'jpg', 'minZoom'=>6, 'maxZoom'=>11,
-      'attribution'=>"",
-    ],
-    'scan50-1950'=> [
-      'gpname'=>'GEOGRAPHICALGRIDSYSTEMS.MAPS.SCAN50.1950',
-      'title'=>"Cartes 1:50.000 de 1950",
-      'doc'=>'http://professionnels.ign.fr/scanhisto',
-      'format'=>'jpg', 'minZoom'=>3, 'maxZoom'=>15,
-    ],
-    'cartes-etatmajor40'=> [
-      'gpname'=>'GEOGRAPHICALGRIDSYSTEMS.ETATMAJOR40',
-      'title'=>"Cartes de l'état-major 1/40 000 (1820-1866)",
-      'doc'=>'http://professionnels.ign.fr/scanhisto',
-      'format'=>'jpg', 'minZoom'=>6, 'maxZoom'=>15,
-    ],
-    'cartes-etatmajor10'=> [
-      'gpname'=>'GEOGRAPHICALGRIDSYSTEMS.ETATMAJOR10',
-      'title'=>"Carte des environs de Paris 1/10 000 (1818-1824)",
-      'doc'=>'http://professionnels.ign.fr/scanhisto',
-      'format'=>'jpg', 'minZoom'=>6, 'maxZoom'=>15,
-    ],
-    'carte-paris-1906'=> [
-      'gpname'=>'GEOGRAPHICALGRIDSYSTEMS.1900TYPEMAPS',
-      'title'=>"Carte de Paris de 1906",
-      'doc'=>'http://professionnels.ign.fr/scanhisto',
-      'format'=>'jpg', 'minZoom'=>6, 'maxZoom'=>15,
-    ],
-    'carte-guyane-bonne'=> [
-      'gpname'=>'GEOGRAPHICALGRIDSYSTEMS.BONNE',
-      'title'=>"Carte de Guyane (1780 - Col Bonne)",
-      'abstract'=>"Carte de Guyane française établie par M. Bonne, Ingénieur-Hydrographe de la Marine. Cette carte figure dans ‘L’atlas de toutes les parties connues du globe terrestre’, ouvrage rédigé par l’abbé Guillaume-Thomas RAYNAL et publié à Genève en 1780.",
-      'format'=>'jpg', 'minZoom'=>6, 'maxZoom'=>10,
-    ],
-  
-  // 4) couches issues de MNT
-    'altitude'=> [
-      'gpname'=>'ELEVATION.SLOPES',
-      'title'=>"MNT affiché en teintes hypsométriques",
-      'abstract'=>"La couche altitude se compose d'un MNT (Modèle Numérique de Terrain) affiché en teintes hypsométriques et issu de la BD ALTI®.",
-      'format'=>'jpg', 'minZoom'=>6, 'maxZoom'=>14,
-    ],
-    'carte-pentes'=> [
-      'gpname'=>'GEOGRAPHICALGRIDSYSTEMS.SLOPES.MOUNTAIN',
-      'title'=>"Carte des pentes",
-      'abstract'=>"Carte des zones ayant une valeur de pente supérieure à 30°-35°-40°-45° d'après la BD ALTI au pas de 5m.",
-      'format'=>'png', 'minZoom'=>6, 'maxZoom'=>14,
-    ],
-    'estompage'=> [
-      'protocol'=>'WMS',
-      'url'=>'http://wxs.ign.fr/KEY/geoportail/r/wms',
-      'gpname'=>'ELEVATION.ELEVATIONGRIDCOVERAGE.SHADOW',
-      'title'=>"Estompage",
-      'abstract'=>"Couche d'ombrage calculée à partir des données altimétriques de l'IGN permettant de mieux appréhender le relief. L'estompage proposé est réalisé à partir des données MNT BDAlti au pas de 25m avec deux soleils : un au nord-est de hauteur 45°, l'autre zénithal.",
-      'format'=>'jpg', 'minZoom'=>0, 'maxZoom'=>21,
-    ],
-  
-  // 5) OCS-GE
-    'ocsge-couverture'=> [
-      'gpname'=>'OCSGE.COUVERTURE',
-      'title'=>"OCSGE - Couverture",
-      'doc'=>'http://professionnels.ign.fr/ocsge',
-      'format'=>'png', 'minZoom'=>6, 'maxZoom'=>16,
-      'attribution'=>"",
-    ],
-    'ocsge-usage'=> [
-      'gpname'=>'OCSGE.USAGE',
-      'title'=>"OCSGE - Usage",
-      'doc'=>'http://professionnels.ign.fr/ocsge',
-      'format'=>'png', 'minZoom'=>6, 'maxZoom'=>16,
-      'attribution'=>"",
-    ],
-    'ocsge-constructions'=> [
-      'gpname'=>'OCSGE.CONSTRUCTIONS',
-      'title'=>"OCSGE - Constructions",
-      'doc'=>'http://professionnels.ign.fr/ocsge',
-      'format'=>'png', 'minZoom'=>6, 'maxZoom'=>16,
-      'attribution'=>"",
-    ],
-  
-  // 6) diverses couches vecteur dans l'ordre logique d'affichage
-    'aerodromes'=> [
-      'gpname'=>'TRANSPORTNETWORKS.RUNWAYS',
-      'title'=>"Aérodromes",
-      'abstract'=>"Localisation des aéroports, aérodromes et héliports, des pistes, bâtiments et équipements dédiés.",
-      'format'=>'png', 'minZoom'=>6, 'maxZoom'=>18,
-      'attribution'=>"IGN",
-    ],
-    'hydrographie'=> [
-      'gpname'=>'HYDROGRAPHY.HYDROGRAPHY',
-      'title'=>"Hydrographie",
-      'format'=>'png', 'minZoom'=>6, 'maxZoom'=>18,
-      'attribution'=>"IGN",
-    ],
-    'trait-de-cote-histolitt'=> [
-      'gpname'=>'ELEVATION.LEVEL0',
-      'title'=>"Trait de côte Histolitt",
-      'abstract'=>"Produit par le Shom et l'IGN, ce trait de côte correspond à la laisse des plus hautes mers dans le cas d'une marée astronomique de coefficient 120 et dans des conditions météorologiques normales (pas de vent du large, pas de dépression atmosphérique susceptible d'élever le niveau de la mer).",
-      'format'=>'png', 'minZoom'=>6, 'maxZoom'=>18,
-      'attribution'=>"&copy; <a href='http://www.ign.fr'>IGN</a>, &copy; <a href='http://data.shom.fr'>SHOM</a>",
-    ],
-    'ferroviaire'=> [
-      'gpname'=>'TRANSPORTNETWORKS.RAILWAYS',
-      'title'=>"Réseau ferroviaire",
-      'format'=>'png', 'minZoom'=>6, 'maxZoom'=>18,
-      'attribution'=>"IGN",
-    ],
-    'batiments'=> [
-      'gpname'=>'BUILDINGS.BUILDINGS',
-      'title'=>"Bâtiments",
-      'format'=>'png', 'minZoom'=>6, 'maxZoom'=>18,
-      'attribution'=>"IGN",
-    ],
-    'routes'=> [
-      'gpname'=>'TRANSPORTNETWORKS.ROADS',
-      'title'=>"Routes",
-      'format'=>'png', 'minZoom'=>6, 'maxZoom'=>18,
-      'attribution'=>"IGN",
-    ],
-    'lignes-electriques'=> [
-      'gpname'=>'UTILITYANDGOVERNMENTALSERVICES.ALL',
-      'title'=>"Lignes électriques",
-      'format'=>'png', 'minZoom'=>6, 'maxZoom'=>18,
-      'attribution'=>"IGN",
-    ],
-    'limites-administratives'=> [
-      'gpname'=>'ADMINISTRATIVEUNITS.BOUNDARIES',
-      'title'=>"Limites administratives",
-      'abstract'=>"Limites des régions, départements, cantons et communes.",
-      'format'=>'png', 'minZoom'=>6, 'maxZoom'=>18,
-      'attribution'=>"IGN",
-    ],
-    'parcelles-cadastrales'=> [
-      'gpname'=>'CADASTRALPARCELS.PARCELS',
-      'title'=>"Parcelles cadastrales (orange)",
-      'doc'=>'http://professionnels.ign.fr/bdparcellaire',
-      'format'=>'png', 'minZoom'=>6, 'maxZoom'=>18,
-      'style'=>'bdparcellaire_o',
-      'attribution'=>"IGN &amp; DGFiP",
-    ],
-    'toponymes'=> [
-      'gpname'=>'GEOGRAPHICALNAMES.NAMES',
-      'title'=>"Dénominations géographiques",
-      'format'=>'png', 'minZoom'=>6, 'maxZoom'=>18,
-      'attribution'=>"IGN",
-    ],
-  /* Utile pour vérifier la génération d'erreur
-    'debug'=> [
-      'gpname'=>'debug',
-      'title'=>"Debug",
-      'format'=>'png', 'minZoom'=>0, 'maxZoom'=>21,
-      'attribution'=>"moi",
-    ],
-  */
-  ];
+WMTS-WebMercator: |
+  ADMIN EXPRESS COG 2017 	ADMINEXPRESS_COG_2017
+  ADMIN EXPRESS COG 2018 	ADMINEXPRESS_COG_2018
+  ADMIN EXPRESS COG CARTO 2017 	ADMINEXPRESS_COG_CARTO_2017
+  ADMIN EXPRESS COG CARTO 2018 	ADMINEXPRESS_COG_CARTO_2018
+  Arrêtés de protection de biotope 	PROTECTEDAREAS.APB
+  BD CARTO EM 	OCS.HISTORIQUE
+  Carroyages DFCI 	GEOGRAPHICALGRIDSYSTEM.DFCI
+  Carte des pentes pour l'agriculture (BCAE) 	GEOGRAPHICALGRIDSYSTEMS.SLOPES.PAC
+  Carte forestière v1 (1987-2004) 	LANDCOVER.FORESTINVENTORY.V1
+  Carte forestière v2 (2006-...) 	LANDCOVER.FORESTINVENTORY.V2
+  Cartes SCAN Express Classique 	GEOGRAPHICALGRIDSYSTEMS.MAPS.SCAN-EXPRESS.CLASSIQUE
+  Cartes SCAN Express Routier 	GEOGRAPHICALGRIDSYSTEMS.MAPS.SCAN-EXPRESS.ROUTIER
+  Conservatoire du littoral : parcelles protégées 	PROTECTEDAREAS.MNHN.CDL.PARCELS
+  Conservatoire du littoral : périmètres d'intervention 	PROTECTEDAREAS.MNHN.CDL.PERIMETER
+  Contours IRIS 	CONTOURS_IRIS_WM_20150319
+  Corine Land Cover 1990 - France Métropolitaine 	LANDCOVER.CLC90_FR
+  Corine Land Cover 2000 - France Métropolitaine 	LANDCOVER.CLC00_FR
+  Corine Land Cover 2000 - France Outre-Mer 	LANDCOVER.CLC00_DOM
+  Corine Land Cover 2000 révisée - France Métropolitaine 	LANDCOVER.CLC00R_FR
+  Corine Land Cover 2006 - France Métropolitaine 	LANDCOVER.CLC06_FR
+  Corine Land Cover 2006 - France Outre-Mer 	LANDCOVER.CLC06_DOM
+  Corine Land Cover 2006 révisée - France Métropolitaine 	LANDCOVER.CLC06R_FR
+  Corine Land Cover 2006 révisée - France Outre-Mer 	LANDCOVER.CLC06R_DOM
+  Corine Land Cover 2012 - France Métropolitaine 	LANDCOVER.CLC12_FR
+  Corine Land Cover 2012 - France Outre-Mer 	LANDCOVER.CLC12_DOM
+  Corine Land Cover 2012 révisée - France Métropolitaine 	LANDCOVER.CLC12R_FR
+  Corine Land Cover 2018 - France Métropolitaine 	LANDCOVER.CLC18_FR
+  Corine Land Cover Changements 1990-2000 - France Métropolitaine 	LANDCOVER.CHA00_FR
+  Corine Land Cover Changements 2000-2006 - France Métropolitaine 	LANDCOVER.CHA06_FR
+  Corine Land Cover Changements 2000-2006 - France Outre-Mer 	LANDCOVER.CHA06_DOM
+  Corine Land Cover Changements 2006-2012 - France Métropolitaine 	LANDCOVER.CHA12_FR
+  Corine Land Cover Changements 2006-2012 - France Outre-Mer 	LANDCOVER.CHA12_DOM
+  Corine Land Cover Changements 2012-2018 - France Métropolitaine 	LANDCOVER.CHA18_FR
+  Délimitations parcellaires AOC viticoles (INAO) 	Aire-Parcellaire
+  Masque de source du RGE Alti 	ELEVATIONGRIDCOVERAGE.HIGHRES.QUALITY
+  Mini-carte 	GEOGRAPHICALGRIDSYSTEMS.MAPS.OVERVIEW
+  Modèle numérique de surface 	ELEVATION.ELEVATIONGRIDCOVERAGE.HIGHRES.MNS
+  Modèle numérique de terrain BD Alti 	ELEVATION.ELEVATIONGRIDCOVERAGE
+  Modèle numérique de terrain RGE Alti 	ELEVATION.ELEVATIONGRIDCOVERAGE.HIGHRES
+  Modèle numérique de terrain mondial SRTM3 	ELEVATION.ELEVATIONGRIDCOVERAGE.SRTM3
+  ORTHO Express 2016 	ORTHOIMAGERY.ORTHOPHOTOS.ORTHO-EXPRESS.2016
+  ORTHO Express 2017 	ORTHOIMAGERY.ORTHOPHOTOS.ORTHO-EXPRESS.2017
+  ORTHO Express 2018 	ORTHOIMAGERY.ORTHOPHOTOS.ORTHO-EXPRESS.2018
+  ORTHO Express IRC 2018 	ORTHOIMAGERY.ORTHOPHOTOS.IRC-EXPRESS.2018
+  Orthophotos du littoral COAST 	ORTHOIMAGERY.ORTHOPHOTOS.COAST2000
+  Parcs nationaux 	PROTECTEDAREAS.PN
+  Parcs naturels marins 	PROTECTEDAREAS.PNM
+  Parcs naturels régionaux 	PROTECTEDAREAS.PNR
+  Photographies aériennes 	ORTHOIMAGERY.ORTHOPHOTOS
+  Photographies aériennes 1950-1965 	ORTHOIMAGERY.ORTHOPHOTOS.1950-1965
+  Photographies aériennes 1965-1980 	ORTHOIMAGERY.ORTHOPHOTOS.1965-1980
+  Photographies aériennes 2000 	ORTHOIMAGERY.ORTHOPHOTOS2000
+  Photographies aériennes 2000-2005 	ORTHOIMAGERY.ORTHOPHOTOS2000-2005
+  Photographies aériennes 2001 	ORTHOIMAGERY.ORTHOPHOTOS2001
+  Photographies aériennes 2002 	ORTHOIMAGERY.ORTHOPHOTOS2002
+  Photographies aériennes 2003 	ORTHOIMAGERY.ORTHOPHOTOS2003
+  Photographies aériennes 2004 	ORTHOIMAGERY.ORTHOPHOTOS2004
+  Photographies aériennes 2005 	ORTHOIMAGERY.ORTHOPHOTOS2005
+  Photographies aériennes 2006 	ORTHOIMAGERY.ORTHOPHOTOS2006
+  Photographies aériennes 2006-2010 	ORTHOIMAGERY.ORTHOPHOTOS2006-2010
+  Photographies aériennes 2007 	ORTHOIMAGERY.ORTHOPHOTOS2007
+  Photographies aériennes 2008 	ORTHOIMAGERY.ORTHOPHOTOS2008
+  Photographies aériennes 2009 	ORTHOIMAGERY.ORTHOPHOTOS2009
+  Photographies aériennes 2010 	ORTHOIMAGERY.ORTHOPHOTOS2010
+  Photographies aériennes 2011 	ORTHOIMAGERY.ORTHOPHOTOS2011
+  Photographies aériennes 2012 	ORTHOIMAGERY.ORTHOPHOTOS2012
+  Photographies aériennes 2013 	ORTHOIMAGERY.ORTHOPHOTOS2013
+  Photographies aériennes 2014 	ORTHOIMAGERY.ORTHOPHOTOS2014
+  Photographies aériennes 2015 	ORTHOIMAGERY.ORTHOPHOTOS2015
+  Photographies aériennes ORTHO Express 	ORTHOIMAGERY.ORTHOPHOTOS.ORTHO-EXPRESS
+  Pistes d aéroport et aérodromes 	TRANSPORTNETWORKS.RUNWAYS
+  Plan IGN 	GEOGRAPHICALGRIDSYSTEMS.PLANIGN
+  Pléiades 2013 	ORTHOIMAGERY.ORTHO-SAT.PLEIADES.2013
+  Pléiades 2014 	ORTHOIMAGERY.ORTHO-SAT.PLEIADES.2014
+  Pléiades 2015 	ORTHOIMAGERY.ORTHO-SAT.PLEIADES.2015
+  Pléiades 2016 	ORTHOIMAGERY.ORTHO-SAT.PLEIADES.2016
+  Pléiades 2017 	ORTHOIMAGERY.ORTHO-SAT.PLEIADES.2017
+  Pléiades 2018 	ORTHOIMAGERY.ORTHO-SAT.PLEIADES.2018
+  Points de repère routiers – BDPR 	TRANSPORTNETWORK.COMMONTRANSPORTELEMENTS.MARKERPOST
+  Quartiers prioritaires de la politique de la ville 	COMMUNES.PRIORITYDISCTRICT
+  RPG 2007 	LANDUSE.AGRICULTURE2007
+  RPG 2008 	LANDUSE.AGRICULTURE2008
+  RPG 2009 	LANDUSE.AGRICULTURE2009
+  RPG 2010 	LANDUSE.AGRICULTURE2010
+  RPG 2011 	LANDUSE.AGRICULTURE2011
+  RPG 2012 	LANDUSE.AGRICULTURE2012
+  RPG 2013 	LANDUSE.AGRICULTURE2013
+  RPG 2014 	LANDUSE.AGRICULTURE2014
+  RPG 2015 	LANDUSE.AGRICULTURE2015
+  RPG 2016 	LANDUSE.AGRICULTURE2016
+  RPG 2017 	LANDUSE.AGRICULTURE2017
+  Restrictions pour drones de loisir 	TRANSPORTS.DRONES.RESTRICTIONS
+  Régions forestières nationales 	LANDCOVER.FORESTAREAS
+  Réseaux ferroviaires 	TRANSPORTNETWORKS.RAILWAYS
+  Réseaux hydrographiques 	HYDROGRAPHY.HYDROGRAPHY
+  Réseaux routiers 	TRANSPORTNETWORKS.ROADS
+  Réserves biologiques 	PROTECTEDAREAS.RB
+  Réserves de biosphère 	PROTECTEDAREAS.BIOS
+  Réserves naturelles de Corse 	PROTECTEDAREAS.RNC
+  Réserves naturelles nationales 	PROTECTEDAREAS.RN
+  Rés nation. chasse et faune sauvage 	PROTECTEDAREAS.RNCF
+  SCAN 50 Historique 1950 	GEOGRAPHICALGRIDSYSTEMS.MAPS.SCAN50.1950
+  SPOT 2014 	ORTHOIMAGERY.ORTHO-SAT.SPOT.2014
+  SPOT 2015 	ORTHOIMAGERY.ORTHO-SAT.SPOT.2015
+  SPOT 2016 	ORTHOIMAGERY.ORTHO-SAT.SPOT.2016
+  SPOT 2017 	ORTHOIMAGERY.ORTHO-SAT.SPOT.2017
+  SPOT 2018 	ORTHOIMAGERY.ORTHO-SAT.SPOT.2018
+  Seuils de pentes pour l’agriculture 	ELEVATION.ELEVATIONGRIDCOVERAGE.THRESHOLD
+  Sites Natura 2000 (Directive Habitats) 	PROTECTEDAREAS.SIC
+  Sites Natura 2000 (Directive Oiseaux) 	PROTECTEDAREAS.ZPS
+  Sylvoécorégions 	LANDCOVER.SYLVOECOREGIONS
+  Sylvoécorégions d'alluvions récentes 	LANDCOVER.SYLVOECOREGIONS.ALLUVIUM
+  Trait de côte 	ELEVATION.LEVEL0
+  ZNIEFF 1 	PROTECTEDAREAS.ZNIEFF1
+  ZNIEFF 2 	PROTECTEDAREAS.ZNIEFF2
+  Zones Franches Urbaines 	AREAMANAGEMENT.ZFU
+  Zones Urbaines Sensibles 	AREAMANAGEMENT.ZUS
+  Zones humides d'importance internat. 	PROTECTEDAREAS.RAMSAR
+  Zones interdites à la prise de vue aérienne 	ORTHOIMAGERY.ORTHOPHOS.RESTRICTEDAREAS
+  WMTS-OCSGE.CONSTRUCTIONS 	OCSGE.CONSTRUCTIONS
+  WMTS-OCSGE.COUVERTURE 	OCSGE.COUVERTURE
+  WMTS-OCSGE.USAGE 	OCSGE.USAGE
+wms-r: |
+  ADMIN EXPRESS COG CARTO 2017 	ADMINEXPRESS_COG_CARTO_2017
+  ADMIN EXPRESS COG CARTO 2018 	ADMINEXPRESS_COG_CARTO_2018
+  BD ORTHO 1950-1965 	ORTHOIMAGERY.ORTHOPHOTOS.1950-1965
+  BD ORTHO® 	ORTHOIMAGERY.ORTHOPHOTOS.BDORTHO
+  BD PARCELLAIRE® 	CADASTRALPARCELS.PARCELS
+  Carroyages DFCI 	GEOGRAPHICALGRIDSYSTEM.DFCI
+  Carte des pentes pour l'agriculture (BCAE) 	GEOGRAPHICALGRIDSYSTEMS.SLOPES.PAC
+  Carte forestière v1 (1987-2004) 	LANDCOVER.FORESTINVENTORY.V1
+  Carte forestière v2 (2006-...) 	LANDCOVER.FORESTINVENTORY.V2
+  Cartes 	GEOGRAPHICALGRIDSYSTEMS.MAPS
+  Corine Land Cover 1990 - France Métropolitaine 	LANDCOVER.CLC90_FR
+  ADMIN EXPRESS COG 2017 	ADMINEXPRESS_COG_2017
+  ADMIN EXPRESS COG 2018 	ADMINEXPRESS_COG_2018
+  Corine Land Cover 2000 - France Métropolitaine 	LANDCOVER.CLC00_FR
+  Corine Land Cover 2006 révisée - France Outre-Mer 	LANDCOVER.CLC06R_DOM
+  Corine Land Cover 2012 - France Métropolitaine 	LANDCOVER.CLC12_FR
+  Corine Land Cover 2012 - France Outre-Mer 	LANDCOVER.CLC12_DOM
+  Corine Land Cover Changements 1990-2000 - France Métropolitaine 	LANDCOVER.CHA00_FR
+  Corine Land Cover Changements 2000-2006 - France Métropolitaine 	LANDCOVER.CHA06_FR
+  Corine Land Cover Changements 2000-2006 - France Outre-Mer 	LANDCOVER.CHA06_DOM
+  Corine Land Cover Changements 2006-2012 - France Métropolitaine 	LANDCOVER.CHA12_FR
+  Corine Land Cover Changements 2006-2012 - France Outre-Mer 	LANDCOVER.CHA12_DOM
+  Corine Land Cover Changements 2012-2018 - France Métropolitaine 	LANDCOVER.CHA18_FR
+  Délimitations parcellaires AOC viticoles (INAO) 	Aire-Parcellaire
+  Corine Land Cover 2000 révisée - France Métropolitaine 	LANDCOVER.CLC00R_FR
+  Corine Land Cover 2006 - France Métropolitaine 	LANDCOVER.CLC06_FR
+  Corine Land Cover 2006 - France Outre-Mer 	LANDCOVER.CLC06_DOM
+  Corine Land Cover 2006 révisée - France Métropolitaine 	LANDCOVER.CLC06R_FR
+  Corine Land Cover 2000 - France Outre-Mer 	LANDCOVER.CLC00_DOM
+  Estompage MNS 	ELEVATION.ELEVATIONGRIDCOVERAGE.HIGHRES.MNS.SHADOW
+  Limites administratives mises à jour en continu 	LIMITES_ADMINISTRATIVES_EXPRESS.LATEST
+  Etat-Major 1 : 10 000 	GEOGRAPHICALGRIDSYSTEMS.ETATMAJOR10
+  Etat-Major 1 : 40 000 	GEOGRAPHICALGRIDSYSTEMS.ETATMAJOR40
+  Masque de source du RGE Alti 	ELEVATIONGRIDCOVERAGE.HIGHRES.QUALITY
+  Modèle numérique de terrain BD Alti 	ELEVATION.ELEVATIONGRIDCOVERAGE
+  Modèle numérique de surface 	ELEVATION.ELEVATIONGRIDCOVERAGE.HIGHRES.MNS
+  Modèle numérique de terrain RGE Alti 	ELEVATION.ELEVATIONGRIDCOVERAGE.HIGHRES
+  Modèle numérique de terrain mondial SRTM3 	ELEVATION.ELEVATIONGRIDCOVERAGE.SRTM3
+  ORTHO Express IRC 2018 	ORTHOIMAGERY.ORTHOPHOTOS.ORTHO-EXPRESS.2018
+  ORTHO HR® 	HR.ORTHOIMAGERY.ORTHOPHOTOS
+  ORTHO IRC 	ORTHOIMAGERY.ORTHOPHOTOS.IRC
+  Ortho Express 2016 	ORTHOIMAGERY.ORTHOPHOTOS.ORTHO-EXPRESS.2016
+  Ortho Express 2017 	ORTHOIMAGERY.ORTHOPHOTOS.ORTHO-EXPRESS.2017
+  Ortho Express 2018 	ORTHOIMAGERY.ORTHOPHOTOS.ORTHO-EXPRESS.2018
+  PLAN IGN J+1 	GEOGRAPHICALGRIDSYSTEMS.MAPS.BDUNI.J1
+  Parcellaire Express (PCI) 	CADASTRALPARCELS.PARCELLAIRE_EXPRESS
+  Photographies aériennes 2000 	ORTHOIMAGERY.ORTHOPHOTOS2000
+  Photographies aériennes 2000-2005 	ORTHOIMAGERY.ORTHOPHOTOS2000-2005
+  Photographies aériennes 2001 	ORTHOIMAGERY.ORTHOPHOTOS2001
+  Photographies aériennes 2002 	ORTHOIMAGERY.ORTHOPHOTOS2002
+  Photographies aériennes 2003 	ORTHOIMAGERY.ORTHOPHOTOS2003
+  Photographies aériennes 2004 	ORTHOIMAGERY.ORTHOPHOTOS2004
+  Photographies aériennes 2005 	ORTHOIMAGERY.ORTHOPHOTOS2005
+  Photographies aériennes 2006 	ORTHOIMAGERY.ORTHOPHOTOS2006
+  Photographies aériennes 2006-2010 	ORTHOIMAGERY.ORTHOPHOTOS2006-2010
+  Photographies aériennes 2007 	ORTHOIMAGERY.ORTHOPHOTOS2007
+  Photographies aériennes 2008 	ORTHOIMAGERY.ORTHOPHOTOS2008
+  Photographies aériennes 2009 	ORTHOIMAGERY.ORTHOPHOTOS2009
+  Photographies aériennes 2010 	ORTHOIMAGERY.ORTHOPHOTOS2010
+  Photographies aériennes 2011 	ORTHOIMAGERY.ORTHOPHOTOS2011
+  Photographies aériennes 2012 	ORTHOIMAGERY.ORTHOPHOTOS2012
+  Pléiades 2013 	ORTHOIMAGERY.ORTHO-SAT.PLEIADES.2013
+  Pléiades 2014 	ORTHOIMAGERY.ORTHO-SAT.PLEIADES.2014
+  Pléiades 2016 	ORTHOIMAGERY.ORTHO-SAT.PLEIADES.2016
+  Pléiades 2017 	ORTHOIMAGERY.ORTHO-SAT.PLEIADES.2017
+  Pléiades 2018 	ORTHOIMAGERY.ORTHO-SAT.PLEIADES.2018
+  Points de repère routiers – BDPR 	TRANSPORTNETWORK.COMMONTRANSPORTELEMENTS.MARKERPOST
+  RPG 2013 	LANDUSE.AGRICULTURE2013
+  RPG 2014 	LANDUSE.AGRICULTURE2014
+  RPG 2015 	LANDUSE.AGRICULTURE2015
+  RPG 2016 	LANDUSE.AGRICULTURE2016
+  RPG 2017 	LANDUSE.AGRICULTURE2017
+  Pléiades 2015 	ORTHOIMAGERY.ORTHO-SAT.PLEIADES.2015
+  Photographies aériennes 2013 	ORTHOIMAGERY.ORTHOPHOTOS2013
+  Photographies aériennes 2014 	ORTHOIMAGERY.ORTHOPHOTOS2014
+  Photographies aériennes 2015 	ORTHOIMAGERY.ORTHOPHOTOS2015
+  Plan IGN 	GEOGRAPHICALGRIDSYSTEMS.PLANIGN
+  Restrictions pour drones de loisir 	TRANSPORTS.DRONES.RESTRICTIONS
+  Routes 	TRANSPORTNETWORKS.ROADS
+  SCAN 25® Topographique 	SCAN25TOPO_PYR-JPEG_WLD_WM
+  SCAN 25® Touristique 	SCAN25TOUR_PYR-JPEG_WLD_WM
+  SCAN 50® 1950 	GEOGRAPHICALGRIDSYSTEMS.MAPS.SCAN50.1950
+  SCAN 100® 	SCAN100_PYR-JPEG_WLD_WM
+  SCAN 1000® 	SCAN1000_PYR-JPEG_WLD_WM
+  SCAN Départemental® 	SCANDEP_PYR-JPEG_FXX_WM
+  SCAN Express Classique 	GEOGRAPHICALGRIDSYSTEMS.MAPS.SCAN-EXPRESS.CLASSIQUE
+  SCAN Express Noir & Blanc 	GEOGRAPHICALGRIDSYSTEMS.MAPS.SCAN-EXPRESS.NIVEAUXGRIS
+  SCAN Express Routier 	GEOGRAPHICALGRIDSYSTEMS.MAPS.SCAN-EXPRESS.ROUTIER
+  SCAN Express Standard 	GEOGRAPHICALGRIDSYSTEMS.MAPS.SCAN-EXPRESS.STANDARD
+  SCAN Littoral® Touristique 	SCANLITTO_PYR-JPEG_WLD_WM
+  SCAN OACI 	SCANOACI_PYR-JPEG_WLD_WM
+  SCAN Régional® 	SCANREG_PYR-JPEG_WLD_WM
+  SPOT 2014 	ORTHOIMAGERY.ORTHO-SAT.SPOT.2014
+  SPOT 2015 	ORTHOIMAGERY.ORTHO-SAT.SPOT.2015
+  SPOT 2016 	ORTHOIMAGERY.ORTHO-SAT.SPOT.2016
+  SPOT 2017 	ORTHOIMAGERY.ORTHO-SAT.SPOT.2017
+  Seuils de pentes pour l’agriculture 	ELEVATION.ELEVATIONGRIDCOVERAGE.THRESHOLD
+  Source RGE Alti – France Métropolitaine 	RGEALTI-SRC_PYR-ZIP_FXX_LAMB93_WMS
+  Source RGE Alti – Guadeloupe 	RGEALTI-SRC_PYR-ZIP_GLP_WGS84UTM20_WMS
+  Source RGE Alti – La Réunion 	RGEALTI-SRC_PYR-ZIP_REU_RGR92UTM40S_WMS
+  Source RGE Alti – Martinique 	RGEALTI-SRC_PYR-ZIP_MTQ_WGS84UTM20_WMS
+  Source RGE Alti – Mayotte 	RGEALTI-SRC_PYR-ZIP_MYT_RGM04UTM38S_WMS
+  Source RGE Alti – Saint Barthélémy 	RGEALTI-SRC_PYR-ZIP_SBA_WGS84UTM20_WMS
+  Source RGE Alti – Saint Pierre et Miquelon 	RGEALTI-SRC_PYR-ZIP_SPM_RGSPM06U21_WMS
+  Zones interdites à la prise de vue aérienne 	ORTHOIMAGERY.ORTHOPHOS.RESTRICTEDAREAS
+  WMS-Raster-L93 - Modèle numérique de surface 	ELEVATION.ELEVATIONGRIDCOVERAGE.HIGHRES.MNS.L93

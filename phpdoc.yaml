@@ -17,6 +17,9 @@ doc: |
     http://localhost/synchro.php?remote=http://prod.geoapi.fr/   
   
 journal: |
+  10/6/2019:
+    - amélioration du viewer html
+    - complétion des couches
   8/6/2019:
     - création
     - déploiement sur tiles.geoapi.fr

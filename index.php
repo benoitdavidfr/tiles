@@ -13,10 +13,6 @@ doc: |
     - documentation intégrée
     - couche cartes plus simple d'emploi
     - mise en cache pour 21 jours (la durée pourrait dépendre du zoom)
-    
-  Gestion des erreurs:
-  - seules les erreurs de logique du code génèrent un die()
-  - en fonctionnement normal toutes les erreurs génèrent une erreur HTTP
 journal: |
   10/6/2019:
     - suppression du point /layers
@@ -32,7 +28,7 @@ require_once __DIR__.'/../../vendor/autoload.php';
 
 use Symfony\Component\Yaml\Yaml;
 
-$version = '2019-06-10T10:00:00';
+$version = '2019-06-10T15:00:00';
 $path_info = $_SERVER['PATH_INFO'] ?? null;
 $script_path = "http://$_SERVER[HTTP_HOST]$_SERVER[SCRIPT_NAME]";
 
@@ -101,11 +97,13 @@ if (preg_match('!^/([^/]*)$!', $path_info, $matches)) {
   
   $dataset = $params['datasets'][$dsid];
   $layers = [];
-  foreach ($dataset['layers'] as $lyrId => $layer) {
-    $layers[$lyrId] = [
-      'title'=> $layer['title'],
-      'href'=> "$script_path$path_info/$lyrId/{z}/{x}/{y}.".($layer['format']=='image/png' ? 'png' : 'jpg'),
-    ];
+  foreach ($dataset['layersByGroup'] as $lyrGroup) {
+    foreach ($lyrGroup as $lyrId => $layer) {
+      $layers[$lyrId] = [
+        'title'=> $layer['title'],
+        'href'=> "$script_path$path_info/$lyrId/{z}/{x}/{y}.".($layer['format']=='image/png' ? 'png' : 'jpg'),
+      ];
+    }
   }
 
   header('Content-type: application/json');
@@ -130,7 +128,10 @@ if (preg_match('!^/([^/]*)/([^/]*)(/{z}/{x}/{y})\.(jpg|png)$!', $path_info, $mat
   if (!isset($params['datasets'][$dsid]))
     error(404, ['error'=> "Erreur $script_path/$dsid ne correspond pas à un jeu de données"]);
   
-  $layers = $params['datasets'][$dsid]['layers'];
+  $dataset = $params['datasets'][$dsid];
+  $layers = [];
+  foreach ($dataset['layersByGroup'] as $lyrGroup)
+    $layers = array_merge($layers, $lyrGroup);
   if (!isset($layers[$lyrId]))
     error(404, ['error'=> "Erreur $script_path/$path_info ne correspond pas à une couche"]);
   
@@ -163,17 +164,19 @@ if (isset($_GET['layer'])) {
 }
 $params = Yaml::parseFile(__DIR__.'/tiles.yaml');
 
-if (!isset($params['datasets'][$dsid]))
+if (!($dataset = $params['datasets'][$dsid] ?? null))
   error(404, ['error'=> "Erreur $script_path/$dsid ne correspond pas à un jeu de données"]);
 
-$layers = $params['datasets'][$dsid]['layers'];
+$layers = [];
+foreach ($dataset['layersByGroup'] as $lyrGroup)
+  $layers = array_merge($layers, $lyrGroup);
 if (!isset($layers[$lyrId]))
   error(404, ['error'=> "Erreur $script_path/$path_info ne correspond pas à une couche"]);
 $layer = $layers[$lyrId];
 
 if ($format == 'text/html') {
   require_once __DIR__.'/htmlviewer.inc.php';
-  htmlViewer("$script_path/$dsid/$lyrId", $layers, $lyrId, $zoom, $x, $y);
+  htmlViewer("$script_path/$dsid/$lyrId", $dataset['layersByGroup'], $layers, $lyrId, $zoom, $x, $y);
   die();
 }
 
@@ -207,13 +210,13 @@ if (!isset($layer['protocol'])) { // par défaut protocole WMTS
   $url = $distribution['wmts']['url'].'?'
         .'service=WMTS&version=1.0.0&request=GetTile'
         .'&tilematrixSet=PM&height=256&width=256'
-        ."&layer=$gpname&format=$format&style=$style"
+        ."&layer=$gpname&format=$format&style=".urlencode($style)
         ."&tilematrix=$zoom&tilecol=$x&tilerow=$y";
   if ($gpname2)
     $url2 = $params['datasets'][$dsid]['distribution']['wmts']['url'].'?'
           .'service=WMTS&version=1.0.0&request=GetTile'
           .'&tilematrixSet=PM&height=256&width=256'
-          ."&layer=$gpname2&format=$format&style=$style"
+          ."&layer=$gpname2&format=$format&style=".urlencode($style)
           ."&tilematrix=$zoom&tilecol=$x&tilerow=$y";
   $referer = $distribution['wmts']['referer'];
 }
@@ -221,7 +224,7 @@ elseif ($layers[$lyrId]['protocol']=='WMS') { // sauf si explicitement WMS
   $style = $layers[$lyrId]['style'] ?? '';
   $url = $distribution['wms']['url'].'?'
         .'service=WMS&version=1.3.0&request=GetMap'
-        ."&layers=$gpname&format=".urlencode($format)."&styles=$style"
+        ."&layers=$gpname&format=".urlencode($format)."&styles=".urlencode($style)
         .($format=='image/png' ? '&transparent=true' : '')
         .'&crs='.urlencode('EPSG:3857').'&bbox='.implode(',',bbox($zoom,$x,$y))
         .'&height=256&width=256';
