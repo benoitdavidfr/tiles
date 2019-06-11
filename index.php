@@ -28,7 +28,7 @@ require_once __DIR__.'/../../vendor/autoload.php';
 
 use Symfony\Component\Yaml\Yaml;
 
-$version = '2019-06-10T15:00:00';
+$version = '2019-06-10T22:00:00';
 $path_info = $_SERVER['PATH_INFO'] ?? null;
 $script_path = "http://$_SERVER[HTTP_HOST]$_SERVER[SCRIPT_NAME]";
 
@@ -236,7 +236,7 @@ elseif ($layers[$lyrId]['protocol']=='WMS') { // sauf si explicitement WMS
 // Envoi des données avec mise en cache
 function sendData($format, $data) {
   $nbDaysInCache = 21;
-  $nbDaysInCache = 1/24/60; // 1'
+  //$nbDaysInCache = 1/24/60; // 1'
   header('Cache-Control: max-age='.($nbDaysInCache*24*60*60)); // mise en cache pour $nbDaysInCache jours
   header('Expires: '.date('r', time() + ($nbDaysInCache*24*60*60))); // mise en cache pour $nbDaysInCache jours
   header('Last-Modified: '.date('r'));
