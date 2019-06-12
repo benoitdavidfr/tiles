@@ -13,7 +13,11 @@ doc: |
     - documentation intégrée
     - couche cartes plus simple d'emploi
     - mise en cache pour 21 jours (la durée pourrait dépendre du zoom)
+  A FAIRE:
+    - pourquoi prendre le format passé en paramètre et pas celui défini pour la couche ???
 journal: |
+  12/6/2019:
+    - possibilité d'appel "/{dsid}/{lyrId}"
   10/6/2019:
     - suppression du point /layers
     - suppression de layers dans le path
@@ -28,7 +32,7 @@ require_once __DIR__.'/../../vendor/autoload.php';
 
 use Symfony\Component\Yaml\Yaml;
 
-$version = '2019-06-10T22:00:00';
+$version = '2019-06-12T08:30:00';
 $path_info = $_SERVER['PATH_INFO'] ?? null;
 $script_path = "http://$_SERVER[HTTP_HOST]$_SERVER[SCRIPT_NAME]";
 
@@ -38,6 +42,7 @@ $mimetypes = [
   'html' => 'text/html',
 ];
 
+// renvoie un message d'erreur en JSON avec un code d'erreur HTTP
 function error(int $code, array $message) {
   $headers = [
     400 => "Bad Request",
@@ -117,12 +122,11 @@ if (preg_match('!^/([^/]*)$!', $path_info, $matches)) {
   ]));
 }
 
-// "/{dsid}/{lyrId}/z/x/y.{fmt}" - une couche
-if (preg_match('!^/([^/]*)/([^/]*)(/{z}/{x}/{y})\.(jpg|png)$!', $path_info, $matches)) {
+// "/{dsid}/{lyrId}/z/x/y.{fmt}" ou "/{dsid}/{lyrId}"- une couche
+if (preg_match('!^/([^/]*)/([^/]*)(/{z}/{x}/{y}\.(jpg|png))?$!', $path_info, $matches)) {
   $dsid = $matches[1];
   $lyrId = $matches[2];
-  $zxyPattern = $matches[3];
-  $fmt = $matches[3];
+  $fmt = isset($matches[3]) ? $matches[4] : null;
   $params = Yaml::parseFile(__DIR__.'/tiles.yaml');
   
   if (!isset($params['datasets'][$dsid]))
@@ -133,9 +137,13 @@ if (preg_match('!^/([^/]*)/([^/]*)(/{z}/{x}/{y})\.(jpg|png)$!', $path_info, $mat
   foreach ($dataset['layersByGroup'] as $lyrGroup)
     $layers = array_merge($layers, $lyrGroup);
   if (!isset($layers[$lyrId]))
-    error(404, ['error'=> "Erreur $script_path/$path_info ne correspond pas à une couche"]);
+    error(404, ['error'=> "Erreur $script_path$path_info ne correspond pas à une couche"]);
   
   $layer = $layers[$lyrId];
+  $lyrFmt = ($layer['format']=='image/png' ? 'png' : 'jpg');
+  if ($fmt && ($lyrFmt <> $fmt))
+    error(404, ['error'=> "Erreur sur $script_path$path_info, format $fmt incorrect"]);
+  
   header('Content-type: application/json');
   die(json_encode([
     'title'=> $layer['title'],
@@ -144,8 +152,44 @@ if (preg_match('!^/([^/]*)/([^/]*)(/{z}/{x}/{y})\.(jpg|png)$!', $path_info, $mat
     'format'=> $layer['format'],
     'minZoom'=> $layer['minZoom'],
     'maxZoom'=> $layer['maxZoom'],
-    'tileUrlPattern'=> "$script_path/$dsid/$lyrId/{z}/{x}/{y}.".($layer['format']=='image/png' ? 'png' : 'jpg'),
+    'tileUrlPattern'=> "$script_path/$dsid/$lyrId/{z}/{x}/{y}.$lyrFmt",
   ], JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE));
+}
+
+// "/{dsid}/{lyrId}/html"- doc de la couche en HTML
+if (preg_match('!^/([^/]*)/([^/]*)/html$!', $path_info, $matches)) {
+  $dsid = $matches[1];
+  $lyrId = $matches[2];
+  $fmt = isset($matches[3]) ? $matches[4] : null;
+  $params = Yaml::parseFile(__DIR__.'/tiles.yaml');
+  
+  if (!isset($params['datasets'][$dsid])) {
+    header('HTTP/1.1 404 Not Found');
+    echo "Erreur $script_path/$dsid ne correspond pas à un jeu de données<br>\n";
+    die();
+  }  
+  $dataset = $params['datasets'][$dsid];
+  $layers = [];
+  foreach ($dataset['layersByGroup'] as $lyrGroup)
+    $layers = array_merge($layers, $lyrGroup);
+  if (!isset($layers[$lyrId])) {
+    header('HTTP/1.1 404 Not Found');
+    echo "Erreur $script_path/$dsid/$lyrId ne correspond pas à une couche<br>\n";
+    die();
+  }
+  $layer = $layers[$lyrId];
+  $lyrFmt = ($layer['format']=='image/png' ? 'png' : 'jpg');
+  
+  echo "<h3>$layer[title] ($lyrId)</h3>\n",
+    "<table border=1>",
+    "<tr><td><i>title</i></td><td>$layer[title]</td></tr>",
+    "<tr><td><i>abstract</i></td><td>$layer[abstract]</td></tr>",
+    "<tr><td><i>format</i></td><td>$layer[format]</td></tr>",
+    "<tr><td><i>minZoom</i></td><td>$layer[minZoom]</td></tr>",
+    "<tr><td><i>maxZoom</i></td><td>$layer[maxZoom]</td></tr>",
+    "<tr><td><i>tileUrlPattern</i></td><td>$script_path/$dsid/$lyrId/{z}/{x}/{y}.$lyrFmt</td></tr>",
+    "</table>\n";
+  die();
 }
 
 // "/{dsid}/layers/{lyrId}/{zoom}/{x}/{y}.{fmt}" - une tuile ou une page
@@ -256,18 +300,24 @@ if (($data = @file_get_contents($url, false, $stream_context)) !== FALSE)
 else
   $urlError = $url;
   
-if ((substr($http_response_header[0], 9, 3)=='404') && $gpname2) {
+if (isset($http_response_header[0]) && (substr($http_response_header[0], 9, 3)=='404') && $gpname2) {
   if (($data = @file_get_contents($url2, false, $stream_context)) !== FALSE)
     sendData($format, $data);
   else
     $urlError = $url2;
 }
-  
-$errorCode = substr($http_response_header[0], 9, 3);
-$errorMessages = [
-  400 => 'HTTP/1.1 400 Bad request',
-  403 => 'HTTP/1.1 403 Forbidden',
-  404 => 'HTTP/1.1 404 Not Found',
-];
-$errorMessage = $errorMessages[$errorCode] ?? "HTTP/1.1 $errorCode Error";
+
+if (!isset($http_response_header[0])) {
+  $errorCode = 500;
+  $errorMessage = "erreur inconnue";
+}
+else {
+  $errorCode = substr($http_response_header[0], 9, 3);
+  $errorMessages = [
+    400 => 'HTTP/1.1 400 Bad request',
+    403 => 'HTTP/1.1 403 Forbidden',
+    404 => 'HTTP/1.1 404 Not Found',
+  ];
+  $errorMessage = $errorMessages[$errorCode] ?? "HTTP/1.1 $errorCode Error";
+}
 error($errorCode, ['error'=> "$errorMessage on $urlError"]);

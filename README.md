@@ -13,7 +13,7 @@ Ce document s'inscrit dans la définition d'une [nouvelle infrastructure de donn
 - définit les points d'accès (endpoints) suivants:
   - / renvoie la description du service et des données exposées ainsi que la liste des couches exposées
   - `{name}/{z}/{x}/{y}.(png|jpg)` renvoie la description de la couche (où {z}, {x}, {y} ne sont pas des paramètres)
-  - `{name}/{z}/{x}/{y}.(png|jpg)` renvoie l'image correspondant à la tuile
+  - `{name}/{z}/{x}/{y}.(png|jpg)` renvoie l'image correspondant à la tuile (où {z}, {x}, {y} sont des paramètres)
       - documenté dans <https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames>
   - `{name}/{z}/{x}/{y}.html` renvoie une page html compsée de 9 tuiles permettant la navigation
 

@@ -8,15 +8,49 @@ doc: |
       - http://localhost/geoapi/tiles/index.php
     sur_geoapi:
       - http://tiles.geoapi.fr/igngp - identifie le web-service exposant sous la forme de tuiles les données du Géportail IGN
-      - http://tiles.geoapi.fr/igngp/layers - décrit les couches exposées
-      - http://tiles.geoapi.fr/igngp/layers/cartes> - identifie et décrit la couche cartes exposée sur le Géportail
-      - http://tiles.geoapi.fr/igngp/layers/cartes/16/32945/22940.jpg> - retourne une tuile
-      - http://tiles.geoapi.fr/igngp/layers/cartes/16/32945/22940.html> - retourne une page Html
+        et décrit les couches exposées
+      - http://tiles.geoapi.fr/igngp/cartes/{z}/{x}/{y}.jpg - identifie et décrit la couche cartes exposée sur le Géportail
+      - http://tiles.geoapi.fr/igngp/layers/cartes/16/32945/22940.jpg - retourne une tuile
+      - http://tiles.geoapi.fr/igngp/layers/cartes/16/32945/22940.html - retourne une page Html
   
   synchro par:
     http://localhost/synchro.php?remote=http://prod.geoapi.fr/   
   
+  A Faire:
+    - mettre un log ?
+    - ajouter à igngp
+      - ortho-express IRC 2018
+      - ortho-express 2016, 2017, 2018
+      - Photographies aériennes 2000, 2001, ..., 2015
+      - BDOrtho Historique 1965-1980
+      - PYRAMIDE SCANEXPRESS CLASSIQUE
+      - PYRAMIDE SCANEXPRESS ROUTIER
+      - SCAN 25 ?
+      - Occupation du sol - Historique
+      - Zones interdites à la prise de vue aérienne
+    - définir de nvx datasets
+      - admin
+        - admin express
+        - Limites administratives mises à jour en continu.
+      - corine land cover
+      - espaces protégés
+      - ville
+      - forêts
+        - DFCI
+        - Carte forestière v1 (1987-2004)
+        - Carte forestière (v2 : 2006-)
+        - Sylvoécorégions
+        - Sylvoécorégions d'alluvions récentes
+      - agriculture
+        - RPG
+        - pentes
+        - AOC
+      - transport
+        - Points de repère routiers (PR)
+        - Restrictions et interdictions drones de loisir
 journal: |
+  12/6/2019:
+    - ajout d'une carte Leaflet
   10/6/2019:
     - amélioration du viewer html
     - complétion des couches
@@ -25,6 +59,7 @@ journal: |
     - déploiement sur tiles.geoapi.fr
 phpScripts:
   - /geoapi/tiles/index.php
+  - /geoapi/tiles/map.php
 phpIncludes:
 htmlFiles:
   - /geoapi/tiles/tiles.yaml

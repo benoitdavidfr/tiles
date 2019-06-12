@@ -5,11 +5,13 @@ require_once __DIR__.'/../../vendor/autoload.php';
 use Symfony\Component\Yaml\Yaml;
 
 echo "<!DOCTYPE HTML><html><head><meta charset='UTF-8'><title>doc</title></head><body>\n";
+$params = Yaml::parseFile(__DIR__.'/tiles.yaml');
 
 if (!isset($_GET['action'])) {
   foreach ($params['datasets'] as $dsid => $dataset) {
     echo "$dataset[title] : <a href='?action=showWmts&amp;dsid=$dsid'>showWmts</a>,
-     <a href='?action=cmp&amp;dsid=$dsid'>cmp</a><br>\n";
+     <a href='?action=cmp&amp;dsid=$dsid'>cmp</a>,
+     <a href='?action=diff&amp;dsid=$dsid'>diff</a><br>\n";
   }
   die();
 }
@@ -83,11 +85,11 @@ function showWmtsLayer(string $dsid, SimpleXMLElement $layer) {
   echo "</table>\n";
 }
 
-$params = Yaml::parseFile(__DIR__.'/tiles.yaml');
 $dsid = $_GET['dsid'];
 $wmts = $params['datasets'][$dsid]['distribution']['wmts'];
 $wmtsCap = new WmtsCap($wmts['url']);
 
+// Listage des couches du serveur WMTS avec détail par couche 
 if ($_GET['action'] == 'showWmts') {
   if (!isset($_GET['layer'])) {
     echo "<h2>Layers</h2>\n";
@@ -124,6 +126,7 @@ function showLayer(array $layer): string {
   return $html.Yaml::dump($layer);
 }
 
+// comparaison entre les couches définies dans params et celles définies dans les capacités du serveur WMTS
 if ($_GET['action'] == 'cmp') {
   foreach ($params['datasets'][$_GET['dsid']]['layersByGroup'] as $lyrGroup) {
     foreach ($lyrGroup as $lyrid => $layer) {
@@ -140,4 +143,31 @@ if ($_GET['action'] == 'cmp') {
       echo "</tr></table>\n";
     }
   }
+  die();
+}
+
+// couches du serveur WMTS non définies dans params
+if ($_GET['action'] == 'diff') {
+  if (!isset($_GET['layer'])) {
+    echo "<h2>Couches du serveur WMTS absentes du sevice $_GET[dsid]</h2>\n";
+    $gpnames = [];
+    foreach ($params['datasets'][$_GET['dsid']]['layersByGroup'] as $lyrGroup) {
+      foreach ($lyrGroup as $lyrid => $layer) {
+        if (isset($layer['gpname']) && !isset($layer['protocol']))
+          $gpnames[$layer['gpname']] = 1;
+      }
+    }
+    foreach ($wmtsCap->Contents->Layer as $layer) {
+      //echo "Identifier=",$layer->Identifier,"<br>\n";
+      if (!isset($gpnames[(string)$layer->Identifier]))
+        showWmtsLayer($dsid, $layer);
+      //echo "<pre>layer="; print_r($layer); echo "</pre>\n";
+    }
+  }
+  else {
+    $layer = $wmtsCap->getLayerById($_GET['layer']);
+    showWmtsLayer($dsid, $layer);
+    echo "<pre>layer="; print_r($layer); echo "</pre>\n";
+  }
+  die();
 }
