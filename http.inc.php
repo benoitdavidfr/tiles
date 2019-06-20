@@ -60,7 +60,7 @@ class Http {
   title: "static function open(string $url, array $requestHeaders=[], array $options=[]): array - ouverture d'un flux http"
   doc: |
     Retourne un array
-    en cas d'erreur non http ['status'=> -1, 'errno'=>errno, 'errstr'=> errstr]
+    en cas d'erreur non http ['status'=> code<0, 'errno'=>errno, 'errstr'=> errstr]
     en cas de succès http ['status'=> httpStatusCode, 'statusLabel'=> httpStatusLabel, 'headers'=> $headers, 'stream'=> $fp]
     lève une exception si l'url initiale ne respecte pas le motif URLPATTERN
     Les options possibles sont:

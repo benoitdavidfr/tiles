@@ -16,6 +16,9 @@ doc: |
   A FAIRE:
     - pourquoi prendre le format passé en paramètre et pas celui défini pour la couche ???
 journal: |
+  20/6/2019:
+    - utilisation de Http::open() à la place de file_get_contents() dans l'appel http
+      afin de récupérer et retourner le message d'erreur
   12/6/2019:
     - possibilité d'appel "/{dsid}/{lyrId}"
     - ajout doc d'une couche en html "/{dsid}/{lyrId}/html"
@@ -30,6 +33,7 @@ journal: |
     - fork de /geoapi/igngp/tile.php
 */
 require_once __DIR__.'/../../vendor/autoload.php';
+require_once __DIR__.'/http.inc.php';
 
 use Symfony\Component\Yaml\Yaml;
 
@@ -290,36 +294,72 @@ function sendData($format, $data) {
   die($data);
 }
 
-$http_context_options = [
-  'method'=>"GET",
-  'timeout' => 10, // 10'
-  'header'=>"Accept-language: en\r\n"
-           ."referer: $referer\r\n",
-];
-$stream_context = stream_context_create(['http'=>$http_context_options]);
-if (($data = @file_get_contents($url, false, $stream_context)) !== FALSE)
-  sendData($format, $data);
-else
-  $urlError = $url;
-  
-if (isset($http_response_header[0]) && (substr($http_response_header[0], 9, 3)=='404') && $gpname2) {
-  if (($data = @file_get_contents($url2, false, $stream_context)) !== FALSE)
+if (0) { // Utilisation de file_get_contents()
+  $http_context_options = [
+    'method'=>"GET",
+    'timeout' => 10, // 10'
+    'header'=>"Accept-language: en\r\n"
+             ."referer: $referer\r\n",
+  ];
+  $stream_context = stream_context_create(['http'=>$http_context_options]);
+  if (($data = @file_get_contents($url, false, $stream_context)) !== FALSE)
     sendData($format, $data);
   else
-    $urlError = $url2;
-}
+    $urlError = $url;
+  
+  if (isset($http_response_header[0]) && (substr($http_response_header[0], 9, 3)=='404') && $gpname2) {
+    if (($data = @file_get_contents($url2, false, $stream_context)) !== FALSE)
+      sendData($format, $data);
+    else
+      $urlError = $url2;
+  }
 
-if (!isset($http_response_header[0])) {
-  $errorCode = 500;
-  $errorMessage = "erreur inconnue";
+  if (!isset($http_response_header[0])) {
+    $errorCode = 500;
+    $errorMessage = "erreur inconnue";
+  }
+  else {
+    $errorCode = substr($http_response_header[0], 9, 3);
+    $errorMessages = [
+      400 => 'HTTP/1.1 400 Bad request',
+      403 => 'HTTP/1.1 403 Forbidden',
+      404 => 'HTTP/1.1 404 Not Found',
+    ];
+    $errorMessage = $errorMessages[$errorCode] ?? "HTTP/1.1 $errorCode Error";
+  }
+  error($errorCode, ['error'=> "$errorMessage on $urlError"]);
 }
-else {
-  $errorCode = substr($http_response_header[0], 9, 3);
-  $errorMessages = [
-    400 => 'HTTP/1.1 400 Bad request',
-    403 => 'HTTP/1.1 403 Forbidden',
-    404 => 'HTTP/1.1 404 Not Found',
-  ];
-  $errorMessage = $errorMessages[$errorCode] ?? "HTTP/1.1 $errorCode Error";
+else { // Utilisation de Http::open()
+  $get = Http::open($url, ["referer: $referer"], ['timeout'=> 10]);
+  if ($get['status'] == 200) {
+    $data = stream_get_contents($get['stream']);
+    sendData($format, $data);
+  }
+  if (($get['status'] == 404) && $gpname2) {
+    $get = Http::open($url2, ["referer: $referer"], ['timeout'=> 10]);
+    if ($get['status'] == 200) {
+      $data = stream_get_contents($get['stream']);
+      sendData($format, $data);
+    }
+    $url = $url2;
+  }
+  if ($get['status'] < 0) 
+    error(500, "erreur $get[errstr] dans l'appel de $url");
+  else {
+    $errorText = stream_get_contents($get['stream']);
+    fclose($get['stream']);
+    $pattern = '!<ExceptionReport><Exception exceptionCode="([^"]*)">([^<]*)</Exception></ExceptionReport>!';
+    if (preg_match($pattern, $errorText, $matches)) {
+      error($get['status'], ['exceptionCode'=> $matches[1],'exceptionMessage'=> $matches[2]]);
+    }
+    else {
+      $errorMessages = [
+        400 => 'HTTP/1.1 400 Bad request',
+        403 => 'HTTP/1.1 403 Forbidden',
+        404 => 'HTTP/1.1 404 Not Found',
+      ];
+      $errorMessage = $errorMessages[$get['status']] ?? "HTTP/1.1 $errorCode Error";
+      error($get['status'], ['error'=> "$errorMessage on $url"]);
+    }
+  }
 }
-error($errorCode, ['error'=> "$errorMessage on $urlError"]);

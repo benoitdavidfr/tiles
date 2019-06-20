@@ -7,38 +7,7 @@ journal: |
   10/6/2019:
     - fork de index.php
 */
-
-// ouvre un URL HTTP ou HTTPS et retourne un pointeur de fichier positionné sur le corps du message de retour
-// qui peut être utilisé avec d'autres fonctions fichiers, telles fgets(), fgetss(), fputs(), fclose() et feof().
-// En cas de succès l'en-tête du message est retournée dans la varaible $headers
-// Si l'URL ne correspond à la syntaxe des URL alors génère une exception.
-// Si l'appel échoue, la fonction retourne FALSE et $headers contient la description de l'erreur.
-function httpOpen(string $url, array &$headers, float $timeout=30) {
-  if (!preg_match('!^(https?)://([^/]+)(.*)$!', $url, $matches))
-    throw new Exception ("l'url $url ne correspond pas au motif");
-  $protocol = $matches[1];
-  $host = $matches[2];
-  $path = $matches[3];
-  $port = $protocol == 'https' ? 443 : 80;
-  $errno = 0;
-  $errstr = '';
-  if (FALSE === $fp = fsockopen($host, $port, $errno, $errstr, $timeout)) {
-    $headers = ['errno'=> $errno, 'errstr'=> $errstr];
-    return FALSE;
-  }
-  $out = "GET $path HTTP/1.1\r\n"
-       . "Host: $host\r\n"
-       . "Connection: Close\r\n\r\n";
-  fwrite($fp, $out);
-  $headers = [];
-  while ($header = fgets($fp)) {
-    if (!($header = rtrim($header, "\r\n")))
-      return $fp;
-    else
-      $headers[] = $header;
-  }
-  return $fp;
-}
+require_once __DIR__.'/http.inc.php';
 
 function imgpath(string $path0, int $zoom, int $x, int $y, string $fmt): string {
   return sprintf("%s/%d/%d/%d.%s", $path0, $zoom, $x, $y, $fmt);
@@ -92,18 +61,18 @@ function htmlViewer(string $path0, array $layersByGroup, array $layers, string $
     echo "</tr></table>\n";
   }
   
-  $headers = [];
   $url = "$path0/$zoom/$x/$y.$fmt";
-  if (($fp = httpOpen($url, $headers)) === FALSE) {
+  $get = Http::open($url);
+  if ($get['status'] < 0) {
     echo "$url -> KO";
-    echo "<pre>error="; var_dump($headers); echo "</pre>\n";
+    echo "<pre>result="; var_dump($get); echo "</pre>\n";
   }
   else {
     echo "$url -> ok";
-    echo "<pre>headers="; var_dump($headers); echo "</pre>\n";
-    if (($httpErrorCode = substr($headers[0], 9, 3)) <> 200) {
-      echo "<pre>get_contents="; var_dump(stream_get_contents($fp)); echo "</pre>\n";
+    echo "<pre>result="; var_dump($get); echo "</pre>\n";
+    if ($get['status'] <> 200) {
+      echo "<pre>contents="; var_dump(stream_get_contents($get['stream'])); echo "</pre>\n";
     }
-    fclose($fp);
+    fclose($get['stream']);
   }
 }
