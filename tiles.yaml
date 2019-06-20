@@ -520,7 +520,59 @@ datasets:
       wms:
         url: http://wxs.ign.fr/ll0dlgs8phk2hjhmtfyqp47v/geoportail/r/wms
         referer: http://benoitdavidfr.github.io/
-        
+  
+enCours:
+  corinelandcover:
+    title: Corine Land Cover
+    abstract:
+    licence:
+    source:
+    doc_url:
+    layersByGroup:
+      clc2018:
+        cha18:
+          title: Métropole - Changements 2012-2018
+          gpname: LANDCOVER.CHA18
+        cha18-fr:
+          title: Métropole - Changements 2012-2018
+          gpname: LANDCOVER.CHA18_FR
+        cha18-dom:
+          title: DOM - Changements 2012-2018
+          gpname: LANDCOVER.CHA18_DOM
+      clc2012:
+        cha12-fr:
+          title: Métropole - Changements 2006-2012
+          gpname: LANDCOVER.CHA12_FR
+        cha12-dom:
+          title: DOM - Changements 2006-2012
+          gpname: LANDCOVER.CHA12_DOM
+      clc2006:
+        cha06-fr:
+          title: Métropole - Changements 2000-2006
+          gpname: LANDCOVER.CHA06_FR
+        cha06-dom:
+          title: DOM - Changements 2000-2006
+          gpname: LANDCOVER.CHA06_DOM
+      clc2000:
+        clc00r-fr:
+          title: Métropole - 2000 révisée
+          gpname: LANDCOVER.CLC00R_FR
+        clc00-dom:
+          title: CORINE Land Cover - DOM - 2000
+          gpname: LANDCOVER.CLC00_DOM
+        cha00-fr:
+          title: Métropole - Changements 1990-2000
+          gpname: LANDCOVER.CHA00_FR
+          
+          
+    distribution:
+      wmts:
+        url: http://wxs.ign.fr/ll0dlgs8phk2hjhmtfyqp47v/wmts
+        referer: http://benoitdavidfr.github.io/
+      wms:
+        url: http://wxs.ign.fr/ll0dlgs8phk2hjhmtfyqp47v/geoportail/r/wms
+        referer: http://benoitdavidfr.github.io/
+  
 examples:
   - title: les tuiles du géoportail IGN
     href: /igngp

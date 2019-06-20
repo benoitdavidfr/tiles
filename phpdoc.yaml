@@ -50,7 +50,7 @@ doc: |
         - Restrictions et interdictions drones de loisir
 journal: |
   12/6/2019:
-    - ajout d'une carte Leaflet
+    - ajout d'une carte Leaflet pour répondre à Olivier Garry
   10/6/2019:
     - amélioration du viewer html
     - complétion des couches
@@ -61,6 +61,7 @@ phpScripts:
   - /geoapi/tiles/index.php
   - /geoapi/tiles/map.php
 phpIncludes:
+  - /geoapi/tiles/http.inc.php
 htmlFiles:
   - /geoapi/tiles/tiles.yaml
   - /geoapi/tiles/api.yaml

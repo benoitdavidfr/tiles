@@ -18,6 +18,7 @@ doc: |
 journal: |
   12/6/2019:
     - possibilité d'appel "/{dsid}/{lyrId}"
+    - ajout doc d'une couche en html "/{dsid}/{lyrId}/html"
   10/6/2019:
     - suppression du point /layers
     - suppression de layers dans le path
@@ -52,6 +53,7 @@ function error(int $code, array $message) {
     501 => "Not Implemented",
   ];
   header(sprintf('HTTP/1.1 %d %s', $code, $headers[$code] ?? 'header not defined'));
+  header('Content-Type: application/json');
   die(json_encode($message, JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE));
 }
 
