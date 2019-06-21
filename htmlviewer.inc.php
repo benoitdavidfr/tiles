@@ -21,9 +21,9 @@ function cell(string $path0, int $zoom, int $x, int $y, string $fmt) {
 }
 
 // Menu HTML pour changer de couche
-function selectingAnotherLayer(string $curLyrId, array $layersByGroup, string $zoomout): string {
+function selectingAnotherLayer(string $curLyrId, string $dsid, string $zoomout): string {
   $html = "<form><select name='layer'>\n";
-  foreach ($layersByGroup as $grpLabel => $lyrGroup) {
+  foreach (Catalog::layersByGroup($dsid) as $grpLabel => $lyrGroup) {
     $html.= "<optgroup label='$grpLabel'>\n";
     foreach ($lyrGroup as $lyrId => $layer)
       $html .= "<option".(($lyrId == $curLyrId) ? ' selected':'')." value='$lyrId'>$layer[title]</option>\n";
@@ -36,10 +36,10 @@ function selectingAnotherLayer(string $curLyrId, array $layersByGroup, string $z
   return $html;
 }
 
-function htmlViewer(string $path0, array $layersByGroup, array $layers, string $lyrId, $zoom, $x, $y) {
+function htmlViewer(string $path0, string $dsid, string $lyrId, $zoom, $x, $y) {
   $zoomout = ($zoom > 0) ? "<a href='".imgpath($path0, $zoom-1, intdiv($x, 2), intdiv($y, 2), 'html')."'>zoom-out</a>\n" : '';
-  echo selectingAnotherLayer($lyrId, $layersByGroup, $zoomout);
-  $fmt = $layers[$lyrId]['format']=='image/png' ? 'png' : 'jpg';
+  echo selectingAnotherLayer($lyrId, $dsid, $zoomout);
+  $fmt = Catalog::layer($dsid, $lyrId)['format']=='image/png' ? 'png' : 'jpg';
   if ($zoom == 0) {
     echo "<a href='",imgpath($path0, 1, 0, 0, 'html'),"'>",
       "<img src='",imgpath($path0, 0, 0, 0, $fmt),"' alt='erreur 0/0/0.$fmt'></a></td>\n";

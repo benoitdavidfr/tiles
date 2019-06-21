@@ -61,6 +61,64 @@ function error(int $code, array $message) {
   die(json_encode($message, JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE));
 }
 
+class Catalog {
+  const FILE = __DIR__.'/tiles.yaml';
+  static $script_path;
+  static $path_info;
+  static $params=null; // les paramètres stockés dans tiles.yaml
+  
+  static function init(): void {
+    self::$script_path = "http://$_SERVER[HTTP_HOST]$_SERVER[SCRIPT_NAME]";
+    self::$path_info = $_SERVER['PATH_INFO'] ?? null;
+    self::$params = Yaml::parseFile(self::FILE);
+  }
+  
+  static function dataset(string $dsid): ?array {
+    if (!self::$params) self::init();
+    return self::$params['datasets'][$dsid] ?? null;
+  }
+  
+  static function layersByGroup(string $dsid): array {
+    if (!self::$params) self::init();
+    if (!($dataset = self::dataset($dsid)))
+      error(404, ['error'=> "Erreur ".self::$script_path."/$dsid ne correspond pas à un jeu de données"]);
+    return $dataset['layersByGroup'];
+  }
+  
+  // retourne l'objet layer correspondant à $dsid et $lyrId
+  static function layer(string $dsid, string $lyrId): ?array {
+    if (!self::$params) self::init();
+    if (!($dataset = self::dataset($dsid)))
+      error(404, ['error'=> "Erreur ".self::$script_path."/$dsid ne correspond pas à un jeu de données"]);
+    $layers = [];
+    foreach ($dataset['layersByGroup'] as $lyrGroup) {
+      if (isset($lyrGroup[$lyrId]))
+        return $lyrGroup[$lyrId];
+    }
+    foreach ($dataset['layersByGroup'] as $lyrGroup) {
+      foreach ($lyrGroup as $lyrId2 => $layer) {
+        if (strpos($lyrId2, '{year}') !== false) {
+          //echo $lyrId2;
+          $pattern = str_replace('{year}', '([0-9][0-9][0-9][0-9])', $lyrId2);
+          //echo $pattern;
+          if (preg_match("!^$pattern$!", $lyrId, $matches)) {
+            $layer['year'] = (int)$matches[1];
+            return $layer;
+          }
+        }
+      }
+    }
+    error(404, ['error'=> "Erreur ".self::$script_path.self::$path_info." ne correspond pas à une couche"]);
+  }
+  
+  static function distribution(string $dsid): array {
+    if (!self::$params) self::init();
+    if (!($dataset = self::dataset($dsid)))
+      error(404, ['error'=> "Erreur ".self::$script_path."/$dsid ne correspond pas à un jeu de données"]);
+    return $dataset['distribution'];
+  }
+};
+
 // racine = titre + liste des jeux de données + exemples d'appels
 if (!$path_info || ($path_info == '/')) {
   $params = Yaml::parseFile(__DIR__.'/tiles.yaml');
@@ -101,12 +159,10 @@ if ($path_info == '/api') {
 // "/{dsid}" - jeu de données
 if (preg_match('!^/([^/]*)$!', $path_info, $matches)) {
   $dsid = $matches[1];
-  $params = Yaml::parseFile(__DIR__.'/tiles.yaml');
   
-  if (!isset($params['datasets'][$dsid]))
+  if (!($dataset = Catalog::dataset($dsid)))
     error(404, ['error'=> "Erreur $script_path/$path_info ne correspond pas à un jeu de données"]);
   
-  $dataset = $params['datasets'][$dsid];
   $layers = [];
   foreach ($dataset['layersByGroup'] as $lyrGroup) {
     foreach ($lyrGroup as $lyrId => $layer) {
@@ -133,33 +189,26 @@ if (preg_match('!^/([^/]*)/([^/]*)(/{z}/{x}/{y}\.(jpg|png))?$!', $path_info, $ma
   $dsid = $matches[1];
   $lyrId = $matches[2];
   $fmt = isset($matches[3]) ? $matches[4] : null;
-  $params = Yaml::parseFile(__DIR__.'/tiles.yaml');
-  
-  if (!isset($params['datasets'][$dsid]))
-    error(404, ['error'=> "Erreur $script_path/$dsid ne correspond pas à un jeu de données"]);
-  
-  $dataset = $params['datasets'][$dsid];
-  $layers = [];
-  foreach ($dataset['layersByGroup'] as $lyrGroup)
-    $layers = array_merge($layers, $lyrGroup);
-  if (!isset($layers[$lyrId]))
-    error(404, ['error'=> "Erreur $script_path$path_info ne correspond pas à une couche"]);
-  
-  $layer = $layers[$lyrId];
+  $layer = Catalog::layer($dsid, $lyrId);
   $lyrFmt = ($layer['format']=='image/png' ? 'png' : 'jpg');
   if ($fmt && ($lyrFmt <> $fmt))
     error(404, ['error'=> "Erreur sur $script_path$path_info, format $fmt incorrect"]);
   
   header('Content-type: application/json');
-  die(json_encode([
+  $result = [
     'title'=> $layer['title'],
     'self'=> "$script_path$path_info",
     'abstract'=> $layer['abstract'],
+  ];
+  if (isset($layer['year']))
+    $result['year'] = $layer['year'];
+  $result = array_merge($result, [
     'format'=> $layer['format'],
     'minZoom'=> $layer['minZoom'],
     'maxZoom'=> $layer['maxZoom'],
     'tileUrlPattern'=> "$script_path/$dsid/$lyrId/{z}/{x}/{y}.$lyrFmt",
-  ], JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE));
+  ]);
+  die(json_encode($result, JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE));
 }
 
 // "/{dsid}/{lyrId}/html"- doc de la couche en HTML
@@ -167,23 +216,12 @@ if (preg_match('!^/([^/]*)/([^/]*)/html$!', $path_info, $matches)) {
   $dsid = $matches[1];
   $lyrId = $matches[2];
   $fmt = isset($matches[3]) ? $matches[4] : null;
-  $params = Yaml::parseFile(__DIR__.'/tiles.yaml');
   
-  if (!isset($params['datasets'][$dsid])) {
-    header('HTTP/1.1 404 Not Found');
-    echo "Erreur $script_path/$dsid ne correspond pas à un jeu de données<br>\n";
-    die();
-  }  
-  $dataset = $params['datasets'][$dsid];
-  $layers = [];
-  foreach ($dataset['layersByGroup'] as $lyrGroup)
-    $layers = array_merge($layers, $lyrGroup);
-  if (!isset($layers[$lyrId])) {
+  if (!($layer = Catalog::layer($dsid, $lyrId))) {
     header('HTTP/1.1 404 Not Found');
     echo "Erreur $script_path/$dsid/$lyrId ne correspond pas à une couche<br>\n";
     die();
   }
-  $layer = $layers[$lyrId];
   $lyrFmt = ($layer['format']=='image/png' ? 'png' : 'jpg');
   
   echo "<h3>$layer[title] ($lyrId)</h3>\n",
@@ -198,7 +236,7 @@ if (preg_match('!^/([^/]*)/([^/]*)/html$!', $path_info, $matches)) {
   die();
 }
 
-// "/{dsid}/layers/{lyrId}/{zoom}/{x}/{y}.{fmt}" - une tuile ou une page
+// "/{dsid}/layers/{lyrId}/{zoom}/{x}/{y}.{fmt}" - une tuile ou une page de tuiles
 if (!preg_match('!^/([^/]*)/([^/]*)/(\d*)/(\d*)/(\d*)\.(jpg|png|html)$!', $path_info, $matches))
   error(404, ['error'=> "Erreur $script_path$path_info ne correspond pas à un point d'entrée"]);
 
@@ -212,21 +250,13 @@ $format = $mimetypes[$matches[6]] ?? null;
 if (isset($_GET['layer'])) {
   $lyrId = $_GET['layer'];
 }
-$params = Yaml::parseFile(__DIR__.'/tiles.yaml');
 
-if (!($dataset = $params['datasets'][$dsid] ?? null))
-  error(404, ['error'=> "Erreur $script_path/$dsid ne correspond pas à un jeu de données"]);
-
-$layers = [];
-foreach ($dataset['layersByGroup'] as $lyrGroup)
-  $layers = array_merge($layers, $lyrGroup);
-if (!isset($layers[$lyrId]))
+if (!($layer = Catalog::layer($dsid, $lyrId)))
   error(404, ['error'=> "Erreur $script_path/$path_info ne correspond pas à une couche"]);
-$layer = $layers[$lyrId];
 
 if ($format == 'text/html') {
   require_once __DIR__.'/htmlviewer.inc.php';
-  htmlViewer("$script_path/$dsid/$lyrId", $dataset['layersByGroup'], $layers, $lyrId, $zoom, $x, $y);
+  htmlViewer("$script_path/$dsid/$lyrId", $dsid, $lyrId, $zoom, $x, $y);
   die();
 }
 
@@ -254,31 +284,30 @@ function bbox(int $zoom, int $ix, int $iy): array {
   ];
 }
 
-$distribution = $params['datasets'][$dsid]['distribution'];
 if (!isset($layer['protocol'])) { // par défaut protocole WMTS
   $style = $layer['style'] ?? 'normal';
-  $url = $distribution['wmts']['url'].'?'
+  $url = Catalog::distribution($dsid)['wmts']['url'].'?'
         .'service=WMTS&version=1.0.0&request=GetTile'
         .'&tilematrixSet=PM&height=256&width=256'
         ."&layer=$gpname&format=$format&style=".urlencode($style)
         ."&tilematrix=$zoom&tilecol=$x&tilerow=$y";
   if ($gpname2)
-    $url2 = $params['datasets'][$dsid]['distribution']['wmts']['url'].'?'
+    $url2 = Catalog::distribution($dsid)['wmts']['url'].'?'
           .'service=WMTS&version=1.0.0&request=GetTile'
           .'&tilematrixSet=PM&height=256&width=256'
           ."&layer=$gpname2&format=$format&style=".urlencode($style)
           ."&tilematrix=$zoom&tilecol=$x&tilerow=$y";
-  $referer = $distribution['wmts']['referer'];
+  $referer = Catalog::distribution($dsid)['wmts']['referer'];
 }
 elseif ($layers[$lyrId]['protocol']=='WMS') { // sauf si explicitement WMS
   $style = $layers[$lyrId]['style'] ?? '';
-  $url = $distribution['wms']['url'].'?'
+  $url = Catalog::distribution($dsid)['wms']['url'].'?'
         .'service=WMS&version=1.3.0&request=GetMap'
         ."&layers=$gpname&format=".urlencode($format)."&styles=".urlencode($style)
         .($format=='image/png' ? '&transparent=true' : '')
         .'&crs='.urlencode('EPSG:3857').'&bbox='.implode(',',bbox($zoom,$x,$y))
         .'&height=256&width=256';
-  $referer = $distribution['wms']['referer'];
+  $referer = Catalog::distribution($dsid)['wms']['referer'];
   //  die("url=<a href='$url'>$url</a>\n");
 } else
   error(500, "protocole $layer[protocol] inconnu");

@@ -164,14 +164,15 @@ datasets:
           maxZoom: 17
           gpname: ORTHOIMAGERY.ORTHO-SAT.SPOT.2018
           attribution: CIRAD, CNES, CNRS, IGN, IRD, Irstea, GEOSUD
-        pleiades2013:
-          title: Pléiades 2013
-          abstract: Images prises en 2013 avec le satellite Pléaides.
+        pleiades{year}:
+          title: Pléiades année {year}
+          abstract: Images prises pendant l'année {year} avec le satellite Pléaides.
+          years: [2018, 2017, 2016, 2015, 2014, 2013]
           source: http://professionnels.ign.fr/images-pleiades
           format: image/png
           minZoom: 0
           maxZoom: 18
-          gpname: ORTHOIMAGERY.ORTHO-SAT.PLEIADES.2013
+          gpname: ORTHOIMAGERY.ORTHO-SAT.PLEIADES.{year}
           attribution: Airbus
         pleiades2014:
           title: Pléiades 2014
