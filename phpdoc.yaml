@@ -18,7 +18,6 @@ doc: |
   
   A Faire:
     - mettre un log ?
-    - ajouter un paramètre {year}
     - ajouter à igngp
       - ortho-express IRC 2018
       - ortho-express 2016, 2017, 2018
@@ -50,6 +49,8 @@ doc: |
         - Points de repère routiers (PR)
         - Restrictions et interdictions drones de loisir
 journal: |
+  21-22/6/2019:
+    - possibilité de définir une couche millésimée
   12/6/2019:
     - ajout d'une carte Leaflet pour répondre à Olivier Garry
   10/6/2019:
