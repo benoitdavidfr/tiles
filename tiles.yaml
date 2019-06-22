@@ -165,59 +165,16 @@ datasets:
           gpname: ORTHOIMAGERY.ORTHO-SAT.SPOT.2018
           attribution: CIRAD, CNES, CNRS, IGN, IRD, Irstea, GEOSUD
         pleiades{year}:
-          title: Pléiades année {year}
-          abstract: Images prises pendant l'année {year} avec le satellite Pléaides.
+          title: Images Pléiades agrégées par année
+          titleYear: Images Pléiades de l'année {year}
+          abstract: Images prises par le satellite Pléaides pendant l'année {year}. Couverture partielle.
+          abstractYear: Images prises pendant l'année {year} avec le satellite Pléaides. Couverture partielle.
           years: [2018, 2017, 2016, 2015, 2014, 2013]
           source: http://professionnels.ign.fr/images-pleiades
           format: image/png
           minZoom: 0
           maxZoom: 18
           gpname: ORTHOIMAGERY.ORTHO-SAT.PLEIADES.{year}
-          attribution: Airbus
-        pleiades2014:
-          title: Pléiades 2014
-          abstract: Images prises en 2014 avec le satellite Pléaides.
-          source: http://professionnels.ign.fr/images-pleiades
-          format: image/png
-          minZoom: 0
-          maxZoom: 18
-          gpname: ORTHOIMAGERY.ORTHO-SAT.PLEIADES.2014
-          attribution: Airbus
-        pleiades2015:
-          title: Pléiades 2015
-          abstract: Images prises en 2015 avec le satellite Pléaides.
-          source: http://professionnels.ign.fr/images-pleiades
-          format: image/png
-          minZoom: 0
-          maxZoom: 18
-          gpname: ORTHOIMAGERY.ORTHO-SAT.PLEIADES.2015
-          attribution: Airbus
-        pleiades2016:
-          title: Pléiades 2016
-          abstract: Images prises en 2016 avec le satellite Pléaides.
-          source: http://professionnels.ign.fr/images-pleiades
-          format: image/png
-          minZoom: 0
-          maxZoom: 18
-          gpname: ORTHOIMAGERY.ORTHO-SAT.PLEIADES.2016
-          attribution: Airbus
-        pleiades2017:
-          title: Pléiades 2017
-          abstract: Images prises en 2017 avec le satellite Pléaides.
-          source: http://professionnels.ign.fr/images-pleiades
-          format: image/png
-          minZoom: 0
-          maxZoom: 18
-          gpname: ORTHOIMAGERY.ORTHO-SAT.PLEIADES.2017
-          attribution: Airbus
-        pleiades2018:
-          title: Pléiades 2018
-          abstract: Images prises en 2018 avec le satellite Pléaides.
-          source: http://professionnels.ign.fr/images-pleiades
-          format: image/png
-          minZoom: 0
-          maxZoom: 18
-          gpname: ORTHOIMAGERY.ORTHO-SAT.PLEIADES.2018
           attribution: Airbus
         ortho-litto2000:
           title: Ortholittorale 2000
@@ -514,6 +471,52 @@ datasets:
           maxZoom: 18
           gpname: GEOGRAPHICALNAMES.NAMES
 
+    périmé:
+      pleiades2014:
+        title: Pléiades 2014
+        abstract: Images prises en 2014 avec le satellite Pléaides.
+        source: http://professionnels.ign.fr/images-pleiades
+        format: image/png
+        minZoom: 0
+        maxZoom: 18
+        gpname: ORTHOIMAGERY.ORTHO-SAT.PLEIADES.2014
+        attribution: Airbus
+      pleiades2015:
+        title: Pléiades 2015
+        abstract: Images prises en 2015 avec le satellite Pléaides.
+        source: http://professionnels.ign.fr/images-pleiades
+        format: image/png
+        minZoom: 0
+        maxZoom: 18
+        gpname: ORTHOIMAGERY.ORTHO-SAT.PLEIADES.2015
+        attribution: Airbus
+      pleiades2016:
+        title: Pléiades 2016
+        abstract: Images prises en 2016 avec le satellite Pléaides.
+        source: http://professionnels.ign.fr/images-pleiades
+        format: image/png
+        minZoom: 0
+        maxZoom: 18
+        gpname: ORTHOIMAGERY.ORTHO-SAT.PLEIADES.2016
+        attribution: Airbus
+      pleiades2017:
+        title: Pléiades 2017
+        abstract: Images prises en 2017 avec le satellite Pléaides.
+        source: http://professionnels.ign.fr/images-pleiades
+        format: image/png
+        minZoom: 0
+        maxZoom: 18
+        gpname: ORTHOIMAGERY.ORTHO-SAT.PLEIADES.2017
+        attribution: Airbus
+      pleiades2018:
+        title: Pléiades 2018
+        abstract: Images prises en 2018 avec le satellite Pléaides.
+        source: http://professionnels.ign.fr/images-pleiades
+        format: image/png
+        minZoom: 0
+        maxZoom: 18
+        gpname: ORTHOIMAGERY.ORTHO-SAT.PLEIADES.2018
+        attribution: Airbus
     distribution:
       wmts:
         url: http://wxs.ign.fr/ll0dlgs8phk2hjhmtfyqp47v/wmts

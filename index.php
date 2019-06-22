@@ -2,11 +2,14 @@
 /*PhpDoc:
 name:  index.php
 title: index.php - service de tuiles simplifiant l'accès aux ressources notamment du GP IGN
-includes: [ layers.inc.php, genmap.inc.php, getkey.inc.php ]
+functions:
+classes:
 doc: |
   Service de tuiles au std OSM simplifiant l'accès au WMTS du GP IGN
   Fonctionnalités:
     - appel sans clé
+    - utilisation du protocole OSM
+    - association à chaque couche d'un URI
     - simplification des paramètres / WMTS
     - simplification des noms de couches
     - ajout de couches non disponibles en WMTS
@@ -16,6 +19,9 @@ doc: |
   A FAIRE:
     - pourquoi prendre le format passé en paramètre et pas celui défini pour la couche ???
 journal: |
+  21/6/2019:
+    - création de la classe Catatalog pour mutualiser le code
+    - ajout de la possibilité de paramétrer une couche par un millésime
   20/6/2019:
     - utilisation de Http::open() à la place de file_get_contents() dans l'appel http
       afin de récupérer et retourner le message d'erreur
@@ -31,13 +37,14 @@ journal: |
     - ajout /api
   8/6/2019:
     - fork de /geoapi/igngp/tile.php
+includes: [ '../../vendor/autoload.php', http.inc.php ]
 */
 require_once __DIR__.'/../../vendor/autoload.php';
 require_once __DIR__.'/http.inc.php';
 
 use Symfony\Component\Yaml\Yaml;
 
-$version = '2019-06-12T08:30:00';
+$version = '2019-06-21T08:30:00';
 $path_info = $_SERVER['PATH_INFO'] ?? null;
 $script_path = "http://$_SERVER[HTTP_HOST]$_SERVER[SCRIPT_NAME]";
 
@@ -47,7 +54,10 @@ $mimetypes = [
   'html' => 'text/html',
 ];
 
-// renvoie un message d'erreur en JSON avec un code d'erreur HTTP
+/*PhpDoc: functions
+name: error
+title: function error(int $code, array $message) - envoi un message d'erreur JSON associé à un code HTTP
+*/
 function error(int $code, array $message) {
   $headers = [
     400 => "Bad Request",
@@ -61,18 +71,24 @@ function error(int $code, array $message) {
   die(json_encode($message, JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE));
 }
 
+/*PhpDoc: classes
+name: Catalog
+title: class Catalog - lit le catalogue Yaml et exploite son contenu
+*/
 class Catalog {
   const FILE = __DIR__.'/tiles.yaml';
   static $script_path;
   static $path_info;
   static $params=null; // les paramètres stockés dans tiles.yaml
   
+  // initialise
   static function init(): void {
     self::$script_path = "http://$_SERVER[HTTP_HOST]$_SERVER[SCRIPT_NAME]";
     self::$path_info = $_SERVER['PATH_INFO'] ?? null;
     self::$params = Yaml::parseFile(self::FILE);
   }
   
+  // retourne l'array correspondant à un dataset
   static function dataset(string $dsid): ?array {
     if (!self::$params) self::init();
     return self::$params['datasets'][$dsid] ?? null;
@@ -90,11 +106,11 @@ class Catalog {
     if (!self::$params) self::init();
     if (!($dataset = self::dataset($dsid)))
       error(404, ['error'=> "Erreur ".self::$script_path."/$dsid ne correspond pas à un jeu de données"]);
-    $layers = [];
     foreach ($dataset['layersByGroup'] as $lyrGroup) {
       if (isset($lyrGroup[$lyrId]))
         return $lyrGroup[$lyrId];
     }
+    // si l'URI demandée est un millésime d'une couche définie alors l'info millésimée est retournée
     foreach ($dataset['layersByGroup'] as $lyrGroup) {
       foreach ($lyrGroup as $lyrId2 => $layer) {
         if (strpos($lyrId2, '{year}') !== false) {
@@ -102,7 +118,21 @@ class Catalog {
           $pattern = str_replace('{year}', '([0-9][0-9][0-9][0-9])', $lyrId2);
           //echo $pattern;
           if (preg_match("!^$pattern$!", $lyrId, $matches)) {
-            $layer['year'] = (int)$matches[1];
+            $year = (int)$matches[1];
+            $layer['title'] = str_replace('{year}', $year, $layer['titleYear']);
+            unset($layer['titleYear']);
+            $layer['abstract'] = str_replace('{year}', $year, $layer['abstractYear']);
+            unset($layer['abstractYear']);
+            //$layer['year'] = $year;
+            unset($layer['years']);
+            if (isset($layer['gpname']))
+              $layer['gpname'] = str_replace('{year}', $year, $layer['gpname']);
+            else {
+              $gpnames = [];
+              foreach ($layer['gpnames'] as $gpname)
+                $gpnames[] = str_replace('{year}', $year, $gpname);
+              $layer['gpnames'] = $gpnames;
+            }
             return $layer;
           }
         }
@@ -200,8 +230,12 @@ if (preg_match('!^/([^/]*)/([^/]*)(/{z}/{x}/{y}\.(jpg|png))?$!', $path_info, $ma
     'self'=> "$script_path$path_info",
     'abstract'=> $layer['abstract'],
   ];
-  if (isset($layer['year']))
-    $result['year'] = $layer['year'];
+  if (isset($layer['source']))
+    $result['source'] = $layer['source'];
+  if (isset($layer['years'])) {
+    foreach ($layer['years'] as $year)
+      $result['years'][$year] = "$script_path/$dsid/".str_replace('{year}', $year, $lyrId)."/{z}/{x}/{y}.$lyrFmt";
+  }
   $result = array_merge($result, [
     'format'=> $layer['format'],
     'minZoom'=> $layer['minZoom'],
@@ -228,6 +262,7 @@ if (preg_match('!^/([^/]*)/([^/]*)/html$!', $path_info, $matches)) {
     "<table border=1>",
     "<tr><td><i>title</i></td><td>$layer[title]</td></tr>",
     "<tr><td><i>abstract</i></td><td>$layer[abstract]</td></tr>",
+    isset($layer['year']) ? "<tr><td><i>year</i></td><td>$layer[year]</td></tr>" : '',
     "<tr><td><i>format</i></td><td>$layer[format]</td></tr>",
     "<tr><td><i>minZoom</i></td><td>$layer[minZoom]</td></tr>",
     "<tr><td><i>maxZoom</i></td><td>$layer[maxZoom]</td></tr>",
@@ -254,6 +289,7 @@ if (isset($_GET['layer'])) {
 if (!($layer = Catalog::layer($dsid, $lyrId)))
   error(404, ['error'=> "Erreur $script_path/$path_info ne correspond pas à une couche"]);
 
+//print_r($layer);
 if ($format == 'text/html') {
   require_once __DIR__.'/htmlviewer.inc.php';
   htmlViewer("$script_path/$dsid/$lyrId", $dsid, $lyrId, $zoom, $x, $y);
@@ -261,13 +297,23 @@ if ($format == 'text/html') {
 }
 
 $gpname2 = null;
-if (isset($layer['gpname']))
+if (isset($layer['gpname'])) {
   $gpname = $layer['gpname'];
-else {
+}
+elseif (isset($layer['gpnames'])) {
   $gpname = $layer['gpnames'][0];
   $gpname2 = $layer['gpnames'][1];
 }
+else
+  error(500, "gpname non défini pour $script_path/$path_info");
+if (isset($layer['years'])) {
+  $year = $layer['years'][0];
+  $gpname = str_replace('{year}', $year, $gpname);
+  $gpname2 = $gpname2 ? str_replace('{year}', $year, $gpname2) : null;
+}
 //print_r($matches);
+
+//echo "gpname=$gpname";
 
 // calcul du BBox à partir de (z,x,y)
 function bbox(int $zoom, int $ix, int $iy): array {
@@ -373,13 +419,13 @@ else { // Utilisation de Http::open()
     $url = $url2;
   }
   if ($get['status'] < 0) 
-    error(500, "erreur $get[errstr] dans l'appel de $url");
+    error(500, ["erreur $get[errstr] dans l'appel de $url"]);
   else {
     $errorText = stream_get_contents($get['stream']);
     fclose($get['stream']);
     $pattern = '!<ExceptionReport><Exception exceptionCode="([^"]*)">([^<]*)</Exception></ExceptionReport>!';
     if (preg_match($pattern, $errorText, $matches)) {
-      error($get['status'], ['exceptionCode'=> $matches[1],'exceptionMessage'=> $matches[2]]);
+      error($get['status'], ['exceptionCode'=> $matches[1],'exceptionMessage'=> $matches[2], 'url'=> $url]);
     }
     else {
       $errorMessages = [

@@ -25,8 +25,20 @@ function selectingAnotherLayer(string $curLyrId, string $dsid, string $zoomout):
   $html = "<form><select name='layer'>\n";
   foreach (Catalog::layersByGroup($dsid) as $grpLabel => $lyrGroup) {
     $html.= "<optgroup label='$grpLabel'>\n";
-    foreach ($lyrGroup as $lyrId => $layer)
-      $html .= "<option".(($lyrId == $curLyrId) ? ' selected':'')." value='$lyrId'>$layer[title]</option>\n";
+    foreach ($lyrGroup as $lyrId => $layer) {
+      if (isset($layer['years'])) {
+        //print_r($layer);
+        $html .= "<option".(($lyrId == $curLyrId) ? ' selected':'')." value='$lyrId'>$layer[title]</option>\n";
+        foreach ($layer['years'] as $year) {
+          $lyrIdYear = str_replace('{year}', $year, $lyrId);
+          $lyrTitleYear = str_replace('{year}', $year, $layer['titleYear']);
+          $html .= "<option".($lyrIdYear == $curLyrId ? ' selected':'')." value='$lyrIdYear'>$lyrTitleYear</option>\n";
+        }
+      }
+      else {
+        $html .= "<option".(($lyrId == $curLyrId) ? ' selected':'')." value='$lyrId'>$layer[title]</option>\n";
+      }
+    }
     $html.= "</optgroup>\n";
   }
   $html .= "</select>\n"
