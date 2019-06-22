@@ -1,31 +1,55 @@
-# Définition d'un web-service de consultation tuilé
-11 juin 2019 (rédaction en cours)
+# Définition d'un web-service de consultation tuilée
+22 juin 2019 (rédaction en cours)
 
 ### introduction
 
-Ce document s'inscrit dans la définition d'une [nouvelle infrastructure de données et de services géographiques](https://github.com/benoitdavidfr/geoinfra/blob/master/README.md).
+L'infrastructure de données et de services géographiques prescrite par la
+[directive Inspire](https://eur-lex.europa.eu/eli/dir/2007/2/oj?locale=fr) se révèle complexe à mettre en oeuvre
+et difficile à utiliser par les non-spécialistes en géomatique,
+notamment les développeurs habitués à utiliser des API.
 
+Ce document s'inscrit dans la définition d'une
+[**nouvelle infrastructure**](https://github.com/benoitdavidfr/geoinfra/blob/master/README.md),
+appelée *géoinfra*, **plus simple à utiliser** notamemnt pour les non-géomaticiens et cherchant à prendre en compte
+les [recommandations W3C/OGC pour la publication de données géographiques sur le web](https://w3c.github.io/sdw/bp/).
 
-### web-service de consultation tuilée<a id='tiles'></a>
+Ce document spécifie un web-service de consultation tuilée qui est un service de consultation au sens de la directive Inspire,
+c'est à dire qui permet de consulter de l'information géographique sous la forme d'images.
 
-- expose un ensemble de couches correspondant chacune à une image géoréférencée PNG ou JPG
-- est identifié par un URI de base (basepath)
-- définit les points d'accès (endpoints) suivants:
-  - / renvoie la description du service et des données exposées ainsi que la liste des couches exposées
-  - `{name}/{z}/{x}/{y}.(png|jpg)` renvoie la description de la couche (où {z}, {x}, {y} ne sont pas des paramètres)
-  - `{name}/{z}/{x}/{y}.(png|jpg)` renvoie l'image correspondant à la tuile (où {z}, {x}, {y} sont des paramètres)
-      - documenté dans <https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames>
-  - `{name}/{z}/{x}/{y}.html` renvoie une page html compsée de 9 tuiles permettant la navigation
+Cette spécification est illustrée dans des exemples listés ci-dessous
+qui font appel à un prototype qui sera progressivement complété.
 
-On reprend ici un format très utilisé sur le web et popularisé par OSM
-en lui ajoutant d'une part un mécanisme de description du service, de la liste des couches et de chaque couche
-et, d'autre part, une possibilité d'affichage HTML avec navigation dans les tuiles (pan/zoom).
+### présentation
+
+Les points forts de ce nouveau service sont les suivants:
+
+  - utilisation du [protocole de service tuilé très populaire défini par OpenStreetMap)(https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames)
+    permetant ainsi l'utilisation du service dans de nombreux outils ;
+  - le motif d'URL défini par le protocole est en outre utilisé comme URI de la couche
+    et fournit une documentation sur la couche ;
+  - les couches sont regroupées en jeux de données, corespondant à un URI, qui permet de lister les couches exposées ;
+  - les jeux de données sont à leur tour regroupés et exposés par les métadonnées du web-service ;
+  - en outre, une couche peut être millésimée, c'est à dire correspondre à différentes couches correspondant chacune
+    à une année particulière.
 
 #### exemples
 
-- <http://tiles.geoapi.fr/igngp> - identifie le web-service exposant sous la forme de tuiles les données du Géportail IGN et décrit les couches exposées
-- <http://tiles.geoapi.fr/igngp/cartes/{z}/{x}/{y}.jpg> - identifie et décrit la couche cartes exposée sur le Géportail
-- <http://tiles.geoapi.fr/igngp/cartes/16/32945/22940.jpg> - retourne une tuile
-- <http://tiles.geoapi.fr/igngp/cartes/16/32945/22940.html> - retourne une page composée de 9 tuiles
-  permettant la navigation dans la couche
+- <http://tiles.geoapi.fr/igngp/cartes/16/32945/22940.jpg> - retourne une tuile de la couche cartes du jeu de données igngp,
+- <http://tiles.geoapi.fr/igngp/cartes/{z}/{x}/{y}.jpg> - identifie et décrit la couche cartes du jeu de données igngp,
+- <http://tiles.geoapi.fr/igngp> - identifie le jeu données exposant sous la forme de tuiles des couches du Géportail IGN et décrit les couches exposées,
+- <http://tiles.geoapi.fr/> - identifie le web-service et décrit les jeux de données ainsi que que l'API du service
+  et fournit des exemples,
+- <http://tiles.geoapi.fr/igngp/cartes/16/32945/22940.html> - retourne une page composée de la tuile désignée
+  ainsi que ses 8 voisines permettant d'une part d'interroger le service tuile par tuile,
+  et, d'autre part, de naviguer simplement dans la couche,
+- <http://tiles.geoapi.fr/igngp/pleiades{year}/{z}/{x}/{y}.png> - identifie et décrit la couche millésimée des images Pléiades
+  correspondant à une couche par millésime,
+- <http://tiles.geoapi.fr/igngp/pleiades2016/{z}/{x}/{y}.png> - identifie et décrit la couche des images Pléiades
+  de l'année 2016,
+- <http://tiles.geoapi.fr/igngp/pleiades2016/5/16/11.png> - retourne une tuile de la couche des images Pléiades de l'année 2016,
+- <http://tiles.geoapi.fr/igngp/pleiades{year}/10/507/350.png> - retourne une tuile de la couche des images Pléiades
+  de l'année la plus récente,
 
+### complément
+
+<http://geoapi.fr/tiles/map.php>

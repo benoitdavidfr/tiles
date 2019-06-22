@@ -5,6 +5,8 @@ title: map.php - carte de démo des couches
 includes: [ ]
 doc: |
 journal: |
+  22/6/2019:
+    - gestion des couches millésimées
   12/6/2019:
     - création
 */
@@ -34,8 +36,8 @@ foreach($dataset['layersByGroup'] as $lyrgroup) {
   $layers = array_merge($layers, $lyrgroup);
 }
 //print_r($layers); die();
-foreach($layers as $lyrId => $layer) {
-  if ($lyrId == 'error') continue;
+
+function lyrDef($dsid, $lyrId, $layer): array {
   if ($_SERVER['HTTP_HOST']=='localhost') {
     $tileUrl = "http://localhost/geoapi/tiles/index.php/$dsid/$lyrId/{z}/{x}/{y}.".($layer['format']=='image/png' ? 'png' : 'jpg');
     $docUrl = "http://localhost/geoapi/tiles/index.php/$dsid/$lyrId/html";
@@ -56,10 +58,23 @@ foreach($layers as $lyrId => $layer) {
       'attribution'=> $layer['attribution'] ?? 'IGN',
     ],
   ];
-  if ($layer['format']=='image/jpeg')
-    $mapDef['bases'][$lyrId] = $lyrDef;
-  else
-    $mapDef['overlays'][$lyrId] = $lyrDef;
+  return $lyrDef;
+}
+
+foreach($layers as $lyrId => $layer) {
+  if ($lyrId == 'error') continue;
+  if (!isset($layer['years'])) {
+    $basoverl = $layer['format']=='image/jpeg' ? 'bases' : 'overlays';
+    $mapDef[$basoverl][$lyrId] = lyrDef($dsid, $lyrId, $layer);
+  }
+  else {
+    $basoverl = $layer['format']=='image/jpeg' ? 'bases' : 'overlays';
+    foreach ($layer['years'] as $year) {
+      $lyrIdYear = str_replace('{year}', $year, $lyrId);
+      $layer['title'] = str_replace('{year}', $year, $layer['titleYear']);
+      $mapDef[$basoverl][$lyrIdYear] = lyrDef($dsid, $lyrIdYear, $layer);
+    }
+  }
 }
 $mapDef['bases']['whiteimg'] = [
   'title'=> "Fond blanc",

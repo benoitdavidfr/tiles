@@ -5,21 +5,21 @@ title: index.php - service de tuiles simplifiant l'accès aux ressources notamme
 functions:
 classes:
 doc: |
-  Service de tuiles au std OSM simplifiant l'accès au WMTS du GP IGN
+  Service de tuiles au protocole OSM simplifiant l'accès au WMTS du GP IGN
   Fonctionnalités:
     - appel sans clé
-    - utilisation du protocole OSM
-    - association à chaque couche d'un URI
-    - simplification des paramètres / WMTS
+    - utilisation du protocole OSM plus simple que WMTS
+    - identification de chaque couche d'un URI
     - simplification des noms de couches
     - ajout de couches non disponibles en WMTS
-    - documentation intégrée
-    - couche cartes plus simple d'emploi
+    - intégration d'une documentation
     - mise en cache pour 21 jours (la durée pourrait dépendre du zoom)
   A FAIRE:
     - pourquoi prendre le format passé en paramètre et pas celui défini pour la couche ???
+  TESTS:
+    - http://localhost/geoapi/tiles/index.php/igngp/scanlitto/15/16277/11676.jpg
 journal: |
-  21/6/2019:
+  21-22/6/2019:
     - création de la classe Catatalog pour mutualiser le code
     - ajout de la possibilité de paramétrer une couche par un millésime
   20/6/2019:
@@ -97,7 +97,7 @@ class Catalog {
   static function layersByGroup(string $dsid): array {
     if (!self::$params) self::init();
     if (!($dataset = self::dataset($dsid)))
-      error(404, ['error'=> "Erreur ".self::$script_path."/$dsid ne correspond pas à un jeu de données"]);
+      error(404, ['error'=> "Erreur ".self::$script_path."$dsid ne correspond pas à un jeu de données"]);
     return $dataset['layersByGroup'];
   }
   
@@ -105,7 +105,7 @@ class Catalog {
   static function layer(string $dsid, string $lyrId): ?array {
     if (!self::$params) self::init();
     if (!($dataset = self::dataset($dsid)))
-      error(404, ['error'=> "Erreur ".self::$script_path."/$dsid ne correspond pas à un jeu de données"]);
+      error(404, ['error'=> "Erreur ".self::$script_path."$dsid ne correspond pas à un jeu de données"]);
     foreach ($dataset['layersByGroup'] as $lyrGroup) {
       if (isset($lyrGroup[$lyrId]))
         return $lyrGroup[$lyrId];
@@ -144,7 +144,7 @@ class Catalog {
   static function distribution(string $dsid): array {
     if (!self::$params) self::init();
     if (!($dataset = self::dataset($dsid)))
-      error(404, ['error'=> "Erreur ".self::$script_path."/$dsid ne correspond pas à un jeu de données"]);
+      error(404, ['error'=> "Erreur ".self::$script_path."$dsid ne correspond pas à un jeu de données"]);
     return $dataset['distribution'];
   }
 };
@@ -191,7 +191,7 @@ if (preg_match('!^/([^/]*)$!', $path_info, $matches)) {
   $dsid = $matches[1];
   
   if (!($dataset = Catalog::dataset($dsid)))
-    error(404, ['error'=> "Erreur $script_path/$path_info ne correspond pas à un jeu de données"]);
+    error(404, ['error'=> "Erreur $script_path$path_info ne correspond pas à un jeu de données"]);
   
   $layers = [];
   foreach ($dataset['layersByGroup'] as $lyrGroup) {
@@ -345,7 +345,7 @@ if (!isset($layer['protocol'])) { // par défaut protocole WMTS
           ."&tilematrix=$zoom&tilecol=$x&tilerow=$y";
   $referer = Catalog::distribution($dsid)['wmts']['referer'];
 }
-elseif ($layers[$lyrId]['protocol']=='WMS') { // sauf si explicitement WMS
+elseif ($layer['protocol']=='WMS') { // sauf si explicitement WMS
   $style = $layers[$lyrId]['style'] ?? '';
   $url = Catalog::distribution($dsid)['wms']['url'].'?'
         .'service=WMS&version=1.3.0&request=GetMap'
@@ -356,7 +356,9 @@ elseif ($layers[$lyrId]['protocol']=='WMS') { // sauf si explicitement WMS
   $referer = Catalog::distribution($dsid)['wms']['referer'];
   //  die("url=<a href='$url'>$url</a>\n");
 } else
-  error(500, "protocole $layer[protocol] inconnu");
+  error(500, ["protocole $layer[protocol] inconnu"]);
+
+//die("url=$url");
 
 // Envoi des données avec mise en cache
 function sendData($format, $data) {
@@ -369,7 +371,7 @@ function sendData($format, $data) {
   die($data);
 }
 
-if (0) { // Utilisation de file_get_contents()
+if (isset($layer['protocol']) && ($layer['protocol']=='WMS')) { // Utilisation de file_get_contents()
   $http_context_options = [
     'method'=>"GET",
     'timeout' => 10, // 10'
@@ -404,7 +406,7 @@ if (0) { // Utilisation de file_get_contents()
   }
   error($errorCode, ['error'=> "$errorMessage on $urlError"]);
 }
-else { // Utilisation de Http::open()
+else { // Utilisation de Http::open() pour le protocole WMTS
   $get = Http::open($url, ["referer: $referer"], ['timeout'=> 10]);
   if ($get['status'] == 200) {
     $data = stream_get_contents($get['stream']);

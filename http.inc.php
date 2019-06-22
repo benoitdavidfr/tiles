@@ -5,6 +5,10 @@ title: http.inc.php - tests de restitution par un client de l'erreur générée 
 doc: |
   La classe Http définit la méthode open() qui ouvre un flux http
   En cas d'appel du fichier une page html permet de définir une URL et des headers
+
+  Bug:
+    - ne focntionne pas si 'Transfer-Encoding: chunked'
+      car la fin du bloc n'est pas prise en compte
 classes:
 */
 { // exemples d'URL 
@@ -32,12 +36,15 @@ http://localhost/geoapi/tiles/index.php/igngp/cartes/12/2027/1439.jpg
 ** test redirection
 http://localhost/geoapi/tiles/server.php
 
+** WMS
+http://wxs.ign.fr/ll0dlgs8phk2hjhmtfyqp47v/geoportail/r/wms?service=WMS&version=1.3.0&request=GetMap&layers=SCANLITTO_PYR-JPEG_WLD_WM&format=image%2Fjpeg&styles=&crs=EPSG%3A3857&bbox=-130860.19242422,5756625.4742132,-129637.19997166,5757848.4666658&height=256&width=256
+
 ";}
 
 
 function dump(string $str) {
   for($i=0; $i < strlen($str); $i++) {
-    $char = substr($headers, $i, 1);
+    $char = substr($str, $i, 1);
     echo "$i: '$char', ",bin2hex($char),"<br>\n";
   }
 }
@@ -86,7 +93,7 @@ class Http {
     $errstr = '';
     if (FALSE === $fp = @fsockopen($host, $port, $errno, $errstr, $timeout))
       return ['status'=> -1, 'errno'=> $errno, 'errstr'=> $errstr];
-    $out = "GET $path HTTP/1.1\r\n"
+    $out = "GET $path HTTP/1.0\r\n"
          . "Host: $host\r\n";
     foreach ($requestHeaders as $key => $val) {
       if (is_int($key))
@@ -98,14 +105,28 @@ class Http {
     //echo "<pre>"; print_r($out); die();
     if (!fwrite($fp, $out))
       return ['status'=> -2, 'errno'=> 0, 'errstr'=> "Erreur dans fwrite()"];
+    if (0) { // affichage brut du retour
+      echo "<pre>\n";
+      while ($buff = fgets($fp)) {
+        var_dump($buff);
+        dump($buff);
+      }
+      die("FIN ligne ".__LINE__);
+    }
     $headers = [];
+    $transferEncoding = null;
     while ($header = rtrim(fgets($fp), "\r\n")) {
       $headers[] = $header;
+      if ($header == 'Transfer-Encoding: chunked')
+        $transferEncoding = 'chunked';
     }
     $status = substr($headers[0], 9, 3);
     $statusLabel = substr($headers[0], 13);
-    if (!$follow_location || ($max_redirects <= 1) || !in_array($status, [301,302]))
+    if (!$follow_location || ($max_redirects <= 1) || !in_array($status, [301,302])) {
+      if ($transferEncoding == 'chunked') // la première ligne encode la taille du bloc
+        $headers[] = 'ChunkedTransferEncodingLength: '.fgets($fp);
       return ['status'=> $status, 'statusLabel'=> $statusLabel, 'headers'=> $headers, 'stream'=> $fp];
+    }
     // cas d'une redirection, appel récursif
     fclose($fp);
     $location = null;
@@ -162,7 +183,8 @@ if ($url) {
   echo "<pre>"; var_dump($result); echo "</pre>\n";
   if (isset($result['stream'])) {
     while ($buff = fgets($result['stream'])) {
-      echo $buff;
+        echo $buff;
+      dump($buff);
     }
   }
 }

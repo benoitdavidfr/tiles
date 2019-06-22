@@ -1,7 +1,7 @@
 title: fichier de paramètres du bouquet d'API tiles
 journal:
-  2019-06-10: |
-    transfert des couches igngp
+  2019-06-22: couches millésimées
+  2019-06-10: transfert des couches igngp
   2019-06-08: création
 datasets:
   igngp:
@@ -94,22 +94,17 @@ datasets:
           minZoom: 0
           maxZoom: 19
           gpname: ORTHOIMAGERY.ORTHOPHOTOS.ORTHO-EXPRESS
-        orthos2006-2010:
-          title: Photographies aériennes 2006-2010
-          abstract: Prises de vues aériennes des territoires disponibles à la fin des années 2006 à 2010.
+        orthos{year}:
+          title: Photographies aériennes millésimées
+          titleYear: Photographies aériennes {year}
+          abstract: Une couche par année de photographies aériennes disponibles à la fin de l'année.
+          abstractYear: Prises de vues aériennes disponible à la fin de l'année {year}
+          years: [2015, 2014, 2013, 2012, 2011, 2010, 2009, 2008, 2007, 2006, 2005, 2004, 2003, 2002, 2001]
           source: http://professionnels.ign.fr/bdorthohisto
           format: image/jpeg
-          minZoom: 0
+          minZoom: 6
           maxZoom: 18
-          gpname: ORTHOIMAGERY.ORTHOPHOTOS2006-2010
-        orthos2000-2005:
-          title: Photographies aériennes 2000-2005
-          abstract: Prises de vues aériennes des territoires pour les années 2000 à 2005.
-          source: http://professionnels.ign.fr/bdorthohisto
-          format: image/jpeg
-          minZoom: 0
-          maxZoom: 18
-          gpname: ORTHOIMAGERY.ORTHOPHOTOS2000-2005
+          gpname: ORTHOIMAGERY.ORTHOPHOTOS{year}
         orthos1950-1965:
           title: Photographies aériennes historiques 1950-1965
           abstract: |
@@ -119,50 +114,18 @@ datasets:
           minZoom: 0
           maxZoom: 18
           gpname: ORTHOIMAGERY.ORTHOPHOTOS.1950-1965
-        spot2014:
-          title: Spot 2014
-          abstract: Mosaique d'images du satellite SPOT prises au cours de l'année 2014.
+        
+        spot{year}:
+          title: Images Spot agrégées par année
+          titleYear: Images Spot de l'année {year}
+          abstract: Images prises par le satellite Spot pendant l'année {year}.
+          abstractYear: Images prises pendant l'année {year} avec le satellite Spot.
+          years: [2018, 2017, 2016, 2015, 2014]
           source: http://professionnels.ign.fr/spot
           format: image/jpeg
           minZoom: 0
           maxZoom: 17
-          gpname: ORTHOIMAGERY.ORTHO-SAT.SPOT.2014
-          attribution: CNES, IGN, GEOSUD
-        spot2015:
-          title: Spot 2015
-          abstract: Mosaique d'images du satellite SPOT prises au cours de l'année 2015.
-          source: http://professionnels.ign.fr/spot
-          format: image/jpeg
-          minZoom: 0
-          maxZoom: 17
-          gpname: ORTHOIMAGERY.ORTHO-SAT.SPOT.2015
-          attribution: CIRAD, CNES, CNRS, IGN, IRD, Irstea, GEOSUD
-        spot2016:
-          title: Spot 2016
-          abstract: Mosaique d'images du satellite SPOT prises au cours de l'année 2016.
-          source: http://professionnels.ign.fr/spot
-          format: image/jpeg
-          minZoom: 0
-          maxZoom: 17
-          gpname: ORTHOIMAGERY.ORTHO-SAT.SPOT.2016
-          attribution: CIRAD, CNES, CNRS, IGN, IRD, Irstea, GEOSUD
-        spot2017:
-          title: Spot 2017
-          abstract: Mosaique d'images du satellite SPOT prises au cours de l'année 2017.
-          source: http://professionnels.ign.fr/spot
-          format: image/jpeg
-          minZoom: 0
-          maxZoom: 17
-          gpname: ORTHOIMAGERY.ORTHO-SAT.SPOT.2017
-          attribution: CIRAD, CNES, CNRS, IGN, IRD, Irstea, GEOSUD
-        spot2018:
-          title: Spot 2018
-          abstract: Mosaique d'images du satellite SPOT prises au cours de l'année 2018.
-          source: http://professionnels.ign.fr/spot
-          format: image/jpeg
-          minZoom: 0
-          maxZoom: 17
-          gpname: ORTHOIMAGERY.ORTHO-SAT.SPOT.2018
+          gpname: ORTHOIMAGERY.ORTHO-SAT.SPOT.{year}
           attribution: CIRAD, CNES, CNRS, IGN, IRD, Irstea, GEOSUD
         pleiades{year}:
           title: Images Pléiades agrégées par année
@@ -471,52 +434,6 @@ datasets:
           maxZoom: 18
           gpname: GEOGRAPHICALNAMES.NAMES
 
-    périmé:
-      pleiades2014:
-        title: Pléiades 2014
-        abstract: Images prises en 2014 avec le satellite Pléaides.
-        source: http://professionnels.ign.fr/images-pleiades
-        format: image/png
-        minZoom: 0
-        maxZoom: 18
-        gpname: ORTHOIMAGERY.ORTHO-SAT.PLEIADES.2014
-        attribution: Airbus
-      pleiades2015:
-        title: Pléiades 2015
-        abstract: Images prises en 2015 avec le satellite Pléaides.
-        source: http://professionnels.ign.fr/images-pleiades
-        format: image/png
-        minZoom: 0
-        maxZoom: 18
-        gpname: ORTHOIMAGERY.ORTHO-SAT.PLEIADES.2015
-        attribution: Airbus
-      pleiades2016:
-        title: Pléiades 2016
-        abstract: Images prises en 2016 avec le satellite Pléaides.
-        source: http://professionnels.ign.fr/images-pleiades
-        format: image/png
-        minZoom: 0
-        maxZoom: 18
-        gpname: ORTHOIMAGERY.ORTHO-SAT.PLEIADES.2016
-        attribution: Airbus
-      pleiades2017:
-        title: Pléiades 2017
-        abstract: Images prises en 2017 avec le satellite Pléaides.
-        source: http://professionnels.ign.fr/images-pleiades
-        format: image/png
-        minZoom: 0
-        maxZoom: 18
-        gpname: ORTHOIMAGERY.ORTHO-SAT.PLEIADES.2017
-        attribution: Airbus
-      pleiades2018:
-        title: Pléiades 2018
-        abstract: Images prises en 2018 avec le satellite Pléaides.
-        source: http://professionnels.ign.fr/images-pleiades
-        format: image/png
-        minZoom: 0
-        maxZoom: 18
-        gpname: ORTHOIMAGERY.ORTHO-SAT.PLEIADES.2018
-        attribution: Airbus
     distribution:
       wmts:
         url: http://wxs.ign.fr/ll0dlgs8phk2hjhmtfyqp47v/wmts
