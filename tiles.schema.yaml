@@ -1,0 +1,242 @@
+title: Schema du fichier de paramètres du bouquet d'API tiles
+$schema: http://json-schema.org/draft-07/schema#
+$id: http://geoapi.fr/tiles/schema
+modified: 2019-06-22
+description: un document décrit des jeux de données contenant chacun un ensemble de couches
+definitions:
+  layer:
+    description: description d'une couche de fond ou calque
+    oneOf:
+      - description: une couche d'un service de tuiles
+        type: object
+        required: [title, type, url]
+        properties:
+          title: { type: string }
+          type: { const: TileLayer }
+          url:
+            description: |
+              URL paramétrée de la couche de tuiles contenant {z} pour le niveau de zoom
+              et {x} et {y} pour les nos de tuile.
+            type: string
+          options:
+            description: options d'affichage des tuiles
+            type: object
+            properties:
+              minZoom:
+                description: The minimum zoom level down to which this layer will be displayed (inclusive).
+                type: integer
+                minimum: 0
+              maxZoom:
+                description: The maximum zoom level up to which this layer will be displayed (inclusive).
+                type: integer
+                minimum: 0
+              detectRetina:
+                description: |
+                  If true and user is on a retina display, it will request four tiles of half the specified size
+                  and a bigger zoom level in place of one to utilize the high resolution.
+                type: boolean 
+              attribution:
+                description: One of the keys in the attributions dictionary of the map
+                type: string
+      - description: une couche UGeoJSONLayer
+        type: object
+        required: [title, type, endpoint]
+        properties:
+          title: { type: string }
+          type: { const: UGeoJSONLayer }
+          endpoint:
+            description: uid d'une couche d'un FeatureDataset ou URL
+            type: string
+          style:
+            description: "[style d'affichage de la couche](https://leafletjs.com/reference-1.4.0.html#path-option)"
+            type: object
+            properties:
+              color:
+                description: Stroke color
+                type: string
+              weight:
+                description: Stroke width in pixels
+                type: integer
+                minimum: 1
+              opacity:
+                description: Stroke opacity
+                type: number
+                minimum: 0
+                maximum: 1
+          pointToLayer:
+            description: |
+              A JS Function defining how GeoJSON points spawn Leaflet layers.
+              It is internally called when data is added, passing the GeoJSON point feature and its LatLng.
+              The default is to spawn a default Marker.
+            type: string
+          minZoom: { type: integer, minimum: 0 }
+          maxZoom: { type: integer, minimum: 0 }
+type: object
+properties:
+  title:
+    description: titre du web-service
+    type: string
+  description:
+    description: Une explication de la carte.
+    type: string
+  $schema:
+    const: /var/www/html/geoapi/tiles/tiles
+  journal:
+    type: object
+    additionalProperties:
+      type: string
+  datasets:
+    type: object
+    additionalProperties:
+      type: object
+      required: [title, abstract]
+      properties:
+        title:
+          description: titre du jeu de données
+          type: string
+        abstract:
+          description: résumé du jeu de données
+          type: string
+        licence:
+          description: licence du jeu de données
+          type: object
+          properties:
+            identifier:
+              description: URI identifiant la licence
+              type: string
+            title:
+              description: titre le la licence
+              type: string
+        description:
+          description: info complémentaires sur le jeu de données
+          type: string
+        spatial:
+          description: extension spatiale du jeu de données
+          type: object
+          properties:
+            name:
+              description: nom donnée à l'extension
+              type: string
+            westlimit:
+              description: longitude minimum
+              type: number
+            southlimit:
+              description: latitude minimum
+              type: number
+            eastlimit:
+              description: longitude maximum
+              type: number
+            northlimit:
+              description: latitude maximum
+              type: number
+        minZoom:
+          description: minZoom par défaut des couches du jeu
+          type: integer
+        maxZoom:
+          description: maxZoom par défaut des couches du jeu
+          type: integer
+        format:
+          description: format par défaut des couches du jeu
+          type: string
+        layersByGroup:
+          description: liste des couches structurée par sous-liste
+          type: object
+          additionalProperties:
+            description: regroupement de couches idéntifié par un nom
+            type: object
+            patternProperties:
+              '{year}':
+                description: description d'une couche millésimée
+                type: object
+                required: [title, titleYear, abstract, abstractYear, years, format, minZoom, maxZoom]
+                properties:
+                  title:
+                    description: titre du groupe des couches
+                    type: string
+                  titleYear:
+                    description: titre de la couche paramétré par {year}
+                    type: string
+                  abstract:
+                    description: résumé du groupe des couches
+                    type: string
+                  abstractYear:
+                    description: résumé de la couche paramétré par {year}
+                    type: string
+                  years:
+                    description: liste des années par ordre décroissant
+                  format:
+                    description: format de la couche
+                    type: string
+                  minZoom:
+                    description: minZoom de la couche
+                    type: integer
+                  maxZoom:
+                    description: maxZoom de la couche
+                    type: integer
+                  protocol:
+                    description: protocole du service source de la couche si différent de WMTS
+                    type: string
+                  gpname:
+                    description: gpname de la couche
+                    type: string
+                  attribution:
+                    description: attribution de la couche
+                    type: string
+              '':
+                description: description d'une couche non millésimée
+                type: object
+                required: [title]
+                properties:
+                  title:
+                    description: titre de la couche
+                    type: string
+                  abstract:
+                    description: résumé de la couche
+                    type: string
+                  format:
+                    description: format de la couche
+                    type: string
+                  minZoom:
+                    description: minZoom de la couche
+                    type: integer
+                  maxZoom:
+                    description: maxZoom de la couche
+                    type: integer
+                  protocol:
+                    description: protocole du service source de la couche si différent de WMTS
+                    type: string
+                  gpname:
+                    description: nom ou identifiant de la couche dans le service source
+                    type: string
+                  style:
+                    description: style de la couche dans le service source
+                    type: string
+                  attribution:
+                    description: attribution de la couche
+                    type: string
+        distribution:
+          description: définition des paramètres des web-services source
+          type: object
+          patternProperties:
+            '^(wmts|wms)$':
+              description: xx
+              type: object
+              properties:
+                url:
+                  type: string
+                referer:
+                  type: string
+  examples:
+    description: liste d'exemples illustrant l'API
+    type: array
+    items:
+      type: object
+      required: [title, href]
+      properties:
+        title:
+          type: string
+        href:
+          type: string
+  defaultMap:
+    description: carte par défaut
+    type: object

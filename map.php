@@ -37,13 +37,15 @@ foreach($dataset['layersByGroup'] as $lyrgroup) {
 }
 //print_r($layers); die();
 
-function lyrDef($dsid, $lyrId, $layer): array {
+function lyrDef(string $dsid, array $dataset, string $lyrId, array $layer): array {
+  $format = $layer['format'] ?? $dataset['format'];
+  $fmt = $format=='image/png' ? 'png' : 'jpg';
   if ($_SERVER['HTTP_HOST']=='localhost') {
-    $tileUrl = "http://localhost/geoapi/tiles/index.php/$dsid/$lyrId/{z}/{x}/{y}.".($layer['format']=='image/png' ? 'png' : 'jpg');
+    $tileUrl = "http://localhost/geoapi/tiles/index.php/$dsid/$lyrId/{z}/{x}/{y}.$fmt";
     $docUrl = "http://localhost/geoapi/tiles/index.php/$dsid/$lyrId/html";
   }
   else {
-    $tileUrl = "http://tiles.geoapi.fr/$dsid/$lyrId/{z}/{x}/{y}.".($layer['format']=='image/png' ? 'png' : 'jpg');
+    $tileUrl = "http://tiles.geoapi.fr/$dsid/$lyrId/{z}/{x}/{y}.$fmt";
     $docUrl = "http://tiles.geoapi.fr/$dsid/$lyrId/html";
   }
   $lyrDef = [
@@ -51,11 +53,11 @@ function lyrDef($dsid, $lyrId, $layer): array {
     'type'=> 'TileLayer',
     'url'=> $tileUrl,
     'options'=> [
-      'format'=> $layer['format'],
-      'minZoom'=> $layer['minZoom'],
-      'maxZoom'=> $layer['maxZoom'],
+      'format'=> $layer['format'] ?? $dataset['format'],
+      'minZoom'=> $layer['minZoom'] ?? $dataset['minZoom'],
+      'maxZoom'=> $layer['maxZoom'] ?? $dataset['maxZoom'],
       'detectRetina'=> true,
-      'attribution'=> $layer['attribution'] ?? 'IGN',
+      'attribution'=> $layer['attribution'] ?? ($dataset['attribution'] ?? 'IGN'),
     ],
   ];
   return $lyrDef;
@@ -63,19 +65,26 @@ function lyrDef($dsid, $lyrId, $layer): array {
 
 foreach($layers as $lyrId => $layer) {
   if ($lyrId == 'error') continue;
+  $format = $layer['format'] ?? $dataset['format'];
+  $basoverl = $format=='image/jpeg' ? 'bases' : 'overlays';
   if (!isset($layer['years'])) {
-    $basoverl = $layer['format']=='image/jpeg' ? 'bases' : 'overlays';
-    $mapDef[$basoverl][$lyrId] = lyrDef($dsid, $lyrId, $layer);
+    $mapDef[$basoverl][$lyrId] = lyrDef($dsid, $dataset, $lyrId, $layer);
   }
   else {
-    $basoverl = $layer['format']=='image/jpeg' ? 'bases' : 'overlays';
     foreach ($layer['years'] as $year) {
       $lyrIdYear = str_replace('{year}', $year, $lyrId);
       $layer['title'] = str_replace('{year}', $year, $layer['titleYear']);
-      $mapDef[$basoverl][$lyrIdYear] = lyrDef($dsid, $lyrIdYear, $layer);
+      $mapDef[$basoverl][$lyrIdYear] = lyrDef($dsid, $dataset, $lyrIdYear, $layer);
     }
   }
 }
+$mapDef['bases']['cartes'] = [
+  'title'=> "cartes",
+  'type'=> 'TileLayer',
+  'url'=> (($_SERVER['HTTP_HOST']=='localhost') ? 'http://localhost/geoapi/tiles/index.php' : 'http://tiles.geoapi.fr')
+      .'/ignbase/cartes/{z}/{x}/{y}.jpg',
+  'options'=>[ 'format'=>'image/jpeg', 'minZoom'=>0, 'maxZoom'=>18, 'detectRetina'=>true],
+];
 $mapDef['bases']['whiteimg'] = [
   'title'=> "Fond blanc",
   'type'=> 'TileLayer',

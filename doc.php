@@ -1,18 +1,15 @@
 <?php
-// confrontation des paramètres de tiles et des capacités des flux IGN
+// 2 objectifs:
+// 1) lister les couches du WMTS absentes du web-service tiles
+// 2) confronter des paramètres de tiles avec les capacités des flux IGN
 require_once __DIR__.'/../../vendor/autoload.php';
 
 use Symfony\Component\Yaml\Yaml;
 
 echo "<!DOCTYPE HTML><html><head><meta charset='UTF-8'><title>doc</title></head><body>\n";
-$params = Yaml::parseFile(__DIR__.'/tiles.yaml');
 
 if (!isset($_GET['action'])) {
-  foreach ($params['datasets'] as $dsid => $dataset) {
-    echo "$dataset[title] : <a href='?action=showWmts&amp;dsid=$dsid'>showWmts</a>,
-     <a href='?action=cmp&amp;dsid=$dsid'>cmp</a>,
-     <a href='?action=diff&amp;dsid=$dsid'>diff</a><br>\n";
-  }
+  echo "<a href='?action=listWmtsLayers'>listWmtsLayers</a>\n";
   die();
 }
 
@@ -66,12 +63,12 @@ function zooms(SimpleXMLElement $TileMatrixSetLink): string {
   return $TileMatrixSetLink->TileMatrixSet." $minZoom $maxZoom";
 }
 
-// affiche une couche sous la forme d'une table HTML
-function showWmtsLayer(string $dsid, SimpleXMLElement $layer) {
+// affiche une couche WMTS sous la forme d'une table HTML
+function showWmtsLayer(SimpleXMLElement $layer) {
   echo "<h3>$layer->Title</h3>\n";
   echo "<table border=1>\n";
   echo "<tr><td>Identifier</td>",
-       "<td><a href='?action=$_GET[action]&amp;dsid=$dsid&amp;layer=$layer->Identifier'>$layer->Identifier</a></td></tr>\n";
+       "<td>$layer->Identifier</td></tr>\n";
   echo "<tr><td>Abstract</td><td>$layer->Abstract</td></tr>\n";
   echo "<tr><td>Format</td><td>$layer->Format</td></tr>\n";
   echo "<tr><td>WGS84BoundingBox</td><td>LowerCorner:",$layer->WGS84BoundingBox->LowerCorner,
@@ -85,28 +82,7 @@ function showWmtsLayer(string $dsid, SimpleXMLElement $layer) {
   echo "</table>\n";
 }
 
-$dsid = $_GET['dsid'];
-$wmts = $params['datasets'][$dsid]['distribution']['wmts'];
-$wmtsCap = new WmtsCap($wmts['url']);
-
-// Listage des couches du serveur WMTS avec détail par couche 
-if ($_GET['action'] == 'showWmts') {
-  if (!isset($_GET['layer'])) {
-    echo "<h2>Layers</h2>\n";
-    foreach ($wmtsCap->Contents->Layer as $layer) {
-      showWmtsLayer($dsid, $layer);
-      //echo "<pre>layer="; print_r($layer); echo "</pre>\n";
-    }
-  }
-  else {
-    $layer = $wmtsCap->getLayerById($_GET['layer']);
-    showWmtsLayer($dsid, $layer);
-    echo "<pre>layer="; print_r($layer); echo "</pre>\n";
-  }
-  die();
-}
-
-function showLayer(array $layer): string {
+function showTileLayer(array $layer): string {
   $html = "<h3>$layer[title]</h3>"
     ."<table border=1>"
     ."<tr><td>abstract</td><td>$layer[abstract]</td></tr>"
@@ -126,48 +102,51 @@ function showLayer(array $layer): string {
   return $html.Yaml::dump($layer);
 }
 
-// comparaison entre les couches définies dans params et celles définies dans les capacités du serveur WMTS
-if ($_GET['action'] == 'cmp') {
-  foreach ($params['datasets'][$_GET['dsid']]['layersByGroup'] as $lyrGroup) {
-    foreach ($lyrGroup as $lyrid => $layer) {
-      echo "<h3>$layer[title]</h3>\n";
-      echo "<table border=1><tr>";
-      echo "<td>",showLayer($layer),"</td>";
-      if (isset($layer['gpname'])) {
-        if ($wmtsLayer = $wmtsCap->getLayerById($layer['gpname'])) {
-          echo "<td>"; showWmtsLayer($dsid, $wmtsLayer); echo "</td>";
+if ($_GET['action'] == 'listWmtsLayers') {
+  $params = Yaml::parseFile(__DIR__.'/tiles.yaml');
+  $tileLayers = [];
+  foreach ($params['datasets'] as $dsid => $dataset) {
+    foreach ($dataset['layersByGroup'] as $lyrGpe) {
+      foreach ($lyrGpe as $lyrId => $layer) {
+        if (isset($layer['gpname'])) {
+          if (strpos($layer['gpname'], '{year}')) {
+            foreach ($layer['years'] as $year) {
+              $tileLayers[] = str_replace('{year}', $year, $layer['gpname']);
+            }
+          }
+          else {
+            //echo "$layer[gpname]<br>\n";
+            $tileLayers[] = $layer['gpname'];
+          }
         }
-        else
-          echo "<td>Not found</td>";
+        else {
+          foreach ($layer['source'] as $source) {
+            //echo "$source[gpname]<br>\n";
+            $tileLayers[] = $source['gpname'];
+          }
+        }
       }
-      echo "</tr></table>\n";
     }
+  }
+  
+  echo "<h2>Couches WMTS absentes de tiles</h2>\n";
+  $wmtsUrl = $params['datasets']['ignbase']['distribution']['wmts']['url'];
+  $wmtsCap = new WmtsCap($wmtsUrl);
+  foreach ($wmtsCap->Contents->Layer as $layer) {
+    if (in_array((string)$layer->Identifier, $tileLayers))
+      continue;
+    //showWmtsLayer($dsid, $layer);
+    //echo "<pre>layer="; print_r($layer); echo "</pre>\n";
+    echo "<a href='?action=showLayer&amp;id=$layer->Identifier'>$layer->Title</a> ($layer->Identifier)<br>\n";
   }
   die();
 }
 
-// couches du serveur WMTS non définies dans params
-if ($_GET['action'] == 'diff') {
-  if (!isset($_GET['layer'])) {
-    echo "<h2>Couches du serveur WMTS absentes du sevice $_GET[dsid]</h2>\n";
-    $gpnames = [];
-    foreach ($params['datasets'][$_GET['dsid']]['layersByGroup'] as $lyrGroup) {
-      foreach ($lyrGroup as $lyrid => $layer) {
-        if (isset($layer['gpname']) && !isset($layer['protocol']))
-          $gpnames[$layer['gpname']] = 1;
-      }
-    }
-    foreach ($wmtsCap->Contents->Layer as $layer) {
-      //echo "Identifier=",$layer->Identifier,"<br>\n";
-      if (!isset($gpnames[(string)$layer->Identifier]))
-        showWmtsLayer($dsid, $layer);
-      //echo "<pre>layer="; print_r($layer); echo "</pre>\n";
-    }
-  }
-  else {
-    $layer = $wmtsCap->getLayerById($_GET['layer']);
-    showWmtsLayer($dsid, $layer);
-    echo "<pre>layer="; print_r($layer); echo "</pre>\n";
-  }
-  die();
+if ($_GET['action'] == 'showLayer') {
+  $params = Yaml::parseFile(__DIR__.'/tiles.yaml');
+  $wmtsUrl = $params['datasets']['ignbase']['distribution']['wmts']['url'];
+  $wmtsCap = new WmtsCap($wmtsUrl);
+  $layer = $wmtsCap->getLayerById($_GET['id']);
+  showWmtsLayer($layer);
+  echo "<pre>"; print_r($layer);
 }

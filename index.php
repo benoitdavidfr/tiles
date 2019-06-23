@@ -103,12 +103,21 @@ class Catalog {
   
   // retourne l'objet layer correspondant à $dsid et $lyrId
   static function layer(string $dsid, string $lyrId): ?array {
-    if (!self::$params) self::init();
     if (!($dataset = self::dataset($dsid)))
       error(404, ['error'=> "Erreur ".self::$script_path."$dsid ne correspond pas à un jeu de données"]);
     foreach ($dataset['layersByGroup'] as $lyrGroup) {
-      if (isset($lyrGroup[$lyrId]))
-        return $lyrGroup[$lyrId];
+      if (isset($lyrGroup[$lyrId])) {
+        $layer = $lyrGroup[$lyrId];
+        if (!isset($layer['format']) && isset($dataset['format']))
+          $layer['format'] = $dataset['format'];
+        if (!isset($layer['minZoom']) && isset($dataset['minZoom']))
+          $layer['minZoom'] = $dataset['minZoom'];
+        if (!isset($layer['maxZoom']) && isset($dataset['maxZoom']))
+          $layer['maxZoom'] = $dataset['maxZoom'];
+        if (!isset($layer['style']) && isset($dataset['style']))
+          $layer['style'] = $dataset['style'];
+        return $layer;
+      }
     }
     // si l'URI demandée est un millésime d'une couche définie alors l'info millésimée est retournée
     foreach ($dataset['layersByGroup'] as $lyrGroup) {
@@ -142,7 +151,6 @@ class Catalog {
   }
   
   static function distribution(string $dsid): array {
-    if (!self::$params) self::init();
     if (!($dataset = self::dataset($dsid)))
       error(404, ['error'=> "Erreur ".self::$script_path."$dsid ne correspond pas à un jeu de données"]);
     return $dataset['distribution'];
@@ -196,9 +204,10 @@ if (preg_match('!^/([^/]*)$!', $path_info, $matches)) {
   $layers = [];
   foreach ($dataset['layersByGroup'] as $lyrGroup) {
     foreach ($lyrGroup as $lyrId => $layer) {
+      $format = $layer['format'] ?? $dataset['format'];
       $layers[$lyrId] = [
         'title'=> $layer['title'],
-        'href'=> "$script_path$path_info/$lyrId/{z}/{x}/{y}.".($layer['format']=='image/png' ? 'png' : 'jpg'),
+        'href'=> "$script_path$path_info/$lyrId/{z}/{x}/{y}.".($format=='image/png' ? 'png' : 'jpg'),
       ];
     }
   }
@@ -228,10 +237,8 @@ if (preg_match('!^/([^/]*)/([^/]*)(/{z}/{x}/{y}\.(jpg|png))?$!', $path_info, $ma
   $result = [
     'title'=> $layer['title'],
     'self'=> "$script_path$path_info",
-    'abstract'=> $layer['abstract'],
+    'abstract'=> $layer['abstract'] ?? '',
   ];
-  if (isset($layer['source']))
-    $result['source'] = $layer['source'];
   if (isset($layer['years'])) {
     foreach ($layer['years'] as $year)
       $result['years'][$year] = "$script_path/$dsid/".str_replace('{year}', $year, $lyrId)."/{z}/{x}/{y}.$lyrFmt";
@@ -299,17 +306,21 @@ if ($format == 'text/html') {
 $gpname2 = null;
 if (isset($layer['gpname'])) {
   $gpname = $layer['gpname'];
+  $style = $layer['style'] ?? 'normal';
 }
-elseif (isset($layer['gpnames'])) {
-  $gpname = $layer['gpnames'][0];
-  $gpname2 = $layer['gpnames'][1];
+elseif (isset($layer['source'])) {
+  $gpname = $layer['source'][0]['gpname'];
+  $style = $layer['source'][0]['style'] ?? 'normal';
+  $gpname2 = $layer['source'][1]['gpname'];
+  $style2 = $layer['source'][1]['style'] ?? 'normal';
 }
 else
-  error(500, "gpname non défini pour $script_path/$path_info");
+  error(500, ['error'=> "gpname non défini pour $script_path/$path_info"]);
 if (isset($layer['years'])) {
   $year = $layer['years'][0];
   $gpname = str_replace('{year}', $year, $gpname);
-  $gpname2 = $gpname2 ? str_replace('{year}', $year, $gpname2) : null;
+  if ($gpname2)
+    $gpname2 = str_replace('{year}', $year, $gpname2);
 }
 //print_r($matches);
 
@@ -331,7 +342,6 @@ function bbox(int $zoom, int $ix, int $iy): array {
 }
 
 if (!isset($layer['protocol'])) { // par défaut protocole WMTS
-  $style = $layer['style'] ?? 'normal';
   $url = Catalog::distribution($dsid)['wmts']['url'].'?'
         .'service=WMTS&version=1.0.0&request=GetTile'
         .'&tilematrixSet=PM&height=256&width=256'
@@ -341,9 +351,9 @@ if (!isset($layer['protocol'])) { // par défaut protocole WMTS
     $url2 = Catalog::distribution($dsid)['wmts']['url'].'?'
           .'service=WMTS&version=1.0.0&request=GetTile'
           .'&tilematrixSet=PM&height=256&width=256'
-          ."&layer=$gpname2&format=$format&style=".urlencode($style)
+          ."&layer=$gpname2&format=$format&style=".urlencode($style2)
           ."&tilematrix=$zoom&tilecol=$x&tilerow=$y";
-  $referer = Catalog::distribution($dsid)['wmts']['referer'];
+  $referer = Catalog::distribution($dsid)['wmts']['referer'] ?? null;
 }
 elseif ($layer['protocol']=='WMS') { // sauf si explicitement WMS
   $style = $layers[$lyrId]['style'] ?? '';
@@ -353,7 +363,7 @@ elseif ($layer['protocol']=='WMS') { // sauf si explicitement WMS
         .($format=='image/png' ? '&transparent=true' : '')
         .'&crs='.urlencode('EPSG:3857').'&bbox='.implode(',',bbox($zoom,$x,$y))
         .'&height=256&width=256';
-  $referer = Catalog::distribution($dsid)['wms']['referer'];
+  $referer = Catalog::distribution($dsid)['wms']['referer'] ?? null;
   //  die("url=<a href='$url'>$url</a>\n");
 } else
   error(500, ["protocole $layer[protocol] inconnu"]);
@@ -372,13 +382,17 @@ function sendData($format, $data) {
 }
 
 if (isset($layer['protocol']) && ($layer['protocol']=='WMS')) { // Utilisation de file_get_contents()
-  $http_context_options = [
-    'method'=>"GET",
-    'timeout' => 10, // 10'
-    'header'=>"Accept-language: en\r\n"
-             ."referer: $referer\r\n",
-  ];
-  $stream_context = stream_context_create(['http'=>$http_context_options]);
+  if ($referer) {
+    $http_context_options = [
+      'method'=>"GET",
+      'timeout' => 10, // 10'
+      'header'=>"Accept-language: en\r\n"
+               ."referer: $referer\r\n",
+    ];
+    $stream_context = stream_context_create(['http'=>$http_context_options]);
+  }
+  else
+    $stream_context = null;
   if (($data = @file_get_contents($url, false, $stream_context)) !== FALSE)
     sendData($format, $data);
   else
@@ -407,13 +421,14 @@ if (isset($layer['protocol']) && ($layer['protocol']=='WMS')) { // Utilisation d
   error($errorCode, ['error'=> "$errorMessage on $urlError"]);
 }
 else { // Utilisation de Http::open() pour le protocole WMTS
-  $get = Http::open($url, ["referer: $referer"], ['timeout'=> 10]);
+  $headers = $referer ? ["referer: $referer"] : [];
+  $get = Http::open($url, $headers, ['timeout'=> 10]);
   if ($get['status'] == 200) {
     $data = stream_get_contents($get['stream']);
     sendData($format, $data);
   }
   if (($get['status'] == 404) && $gpname2) {
-    $get = Http::open($url2, ["referer: $referer"], ['timeout'=> 10]);
+    $get = Http::open($url2, $headers, ['timeout'=> 10]);
     if ($get['status'] == 200) {
       $data = stream_get_contents($get['stream']);
       sendData($format, $data);

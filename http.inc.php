@@ -42,11 +42,38 @@ http://wxs.ign.fr/ll0dlgs8phk2hjhmtfyqp47v/geoportail/r/wms?service=WMS&version=
 ";}
 
 
-function dump(string $str) {
+function dumpx(string $str) {
   for($i=0; $i < strlen($str); $i++) {
     $char = substr($str, $i, 1);
     echo "$i: '$char', ",bin2hex($char),"<br>\n";
   }
+}
+
+/*PhpDoc: functions
+  name:  dump
+  title: function dump($string) - function affichant la chaine en séparant chaque caractère et en affichant aussi le code hexa correspondant
+*/
+function dump(string $string) {
+  echo "<table border=1>";
+  $line = 0;
+  while($line*16 < strlen($string)) {
+    echo "<tr><td><i>$line</i></td><td>|</td>";
+    for ($i=0; $i<16; $i++) {
+      if ($line*16 + $i < strlen($string))
+        echo "<td>",substr($string,$line*16+$i,1),"</td>";
+      else
+        echo "<td></td>";
+    }
+    echo "<td></td>";
+    echo "<td>|</td>";
+    echo "<td></td>";
+    for ($i=0; $i<16; $i++)
+      if ($line*16 + $i < strlen($string))
+        printf("<td>%02x</td>", ord(substr($string,$line*16+$i,1)));
+    echo "</tr>\n";
+    $line++;
+  }
+  echo "</table>\n";
 }
 
 /*PhpDoc: classes
@@ -93,8 +120,9 @@ class Http {
     $errstr = '';
     if (FALSE === $fp = @fsockopen($host, $port, $errno, $errstr, $timeout))
       return ['status'=> -1, 'errno'=> $errno, 'errstr'=> $errstr];
-    $out = "GET $path HTTP/1.0\r\n"
+    $out = "GET $path HTTP/1.1\r\n"
          . "Host: $host\r\n";
+    //echo "<pre>"; var_dump($requestHeaders); die();
     foreach ($requestHeaders as $key => $val) {
       if (is_int($key))
         $out .= "$val\r\n";
@@ -102,7 +130,7 @@ class Http {
         $out .= "$key: $val\r\n";
     }
     $out .= "Connection: Close\r\n\r\n";
-    //echo "<pre>"; print_r($out); die();
+    //echo "<pre>"; var_dump($out); die();
     if (!fwrite($fp, $out))
       return ['status'=> -2, 'errno'=> 0, 'errstr'=> "Erreur dans fwrite()"];
     if (0) { // affichage brut du retour
@@ -120,6 +148,8 @@ class Http {
       if ($header == 'Transfer-Encoding: chunked')
         $transferEncoding = 'chunked';
     }
+    if (!$headers)
+      return ['status'=> -3, 'errno'=> 0, 'errstr'=> "Erreur aucun message http retourné, requête probablement incorrecte"];
     $status = substr($headers[0], 9, 3);
     $statusLabel = substr($headers[0], 13);
     if (!$follow_location || ($max_redirects <= 1) || !in_array($status, [301,302])) {
@@ -137,15 +167,15 @@ class Http {
       }
     }
     if (!$location)
-      return ['status'=> -3, 'errno'=> 0, 'errstr'=> "Erreur champ Location non défini"];
+      return ['status'=> -4, 'errno'=> 0, 'errstr'=> "Erreur champ Location non défini"];
     if (!preg_match(self::URLPATTERN, $location))
-      return ['status'=> -4, 'errno'=> 0, 'errstr'=> "Erreur champ Location contient une URL mal définie"];
+      return ['status'=> -5, 'errno'=> 0, 'errstr'=> "Erreur champ Location contient une URL mal définie"];
     $result = self::open($location, $requestHeaders, [
           'method'=> $method,
           'timeout'=> $timeout,
           'max_redirects'=> $max_redirects-1,
           'follow_location'=> $follow_location]);
-    echo "<pre>"; var_dump($result); echo "</pre>\n";
+    //echo "<pre>"; var_dump($result); echo "</pre>\n";
     if ($result['status'] < 0)
       return $result;
     $result['headers'] = array_merge($headers, $result['headers']);
@@ -168,7 +198,7 @@ echo "</table></form>\n";
 
 if ($url) {
   //echo "<pre>"; var_dump($headers); echo "</pre>\n";
-  $headers = explode("\r\n", $headers);
+  $headers = $headers ? explode("\r\n", $headers) : [];
   //echo "<pre>"; var_dump($headers); echo "</pre>\n";
   //$requestHeaders = ['referer'=> 'http://benoitdavidfr.github.io/'];
   $options2 = [];
