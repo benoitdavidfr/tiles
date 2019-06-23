@@ -33,20 +33,20 @@ Les points forts de ce nouveau service sont les suivants:
 
 ### exemples
 
-- <http://tiles.geoapi.fr/igngp/cartes/16/32945/22940.jpg> - retourne une tuile de la couche cartes du jeu de données igngp,
-- <http://tiles.geoapi.fr/igngp/cartes/{z}/{x}/{y}.jpg> - identifie et décrit la couche cartes du jeu de données igngp,
-- <http://tiles.geoapi.fr/igngp> - identifie le jeu données exposant sous la forme de tuiles des couches du Géportail IGN et décrit les couches exposées,
+- <http://tiles.geoapi.fr/ignbase/cartes/16/32945/22940.jpg> - retourne une tuile de la couche cartes du jeu de données ignbase,
+- <http://tiles.geoapi.fr/ignbase/cartes/{z}/{x}/{y}.jpg> - identifie et décrit la couche cartes du jeu de données ignbase,
+- <http://tiles.geoapi.fr/ignbase> - identifie le jeu données ignbase et décrit les couches exposées,
 - <http://tiles.geoapi.fr/> - identifie le web-service et décrit les jeux de données ainsi que que l'API du service
   et fournit des exemples,
-- <http://tiles.geoapi.fr/igngp/cartes/16/32945/22940.html> - retourne une page composée de la tuile désignée
+- <http://tiles.geoapi.fr/ignbase/cartes/16/32945/22940.html> - retourne une page composée de la tuile désignée
   ainsi que ses 8 voisines permettant d'une part d'interroger le service tuile par tuile,
   et, d'autre part, de naviguer simplement dans la couche,
-- <http://tiles.geoapi.fr/igngp/pleiades{year}/{z}/{x}/{y}.png> - identifie et décrit la couche millésimée des images Pléiades
+- <http://tiles.geoapi.fr/ignbase/pleiades{year}/{z}/{x}/{y}.png> - identifie et décrit la couche millésimée des images Pléiades
   correspondant à une couche par millésime,
-- <http://tiles.geoapi.fr/igngp/pleiades2016/{z}/{x}/{y}.png> - identifie et décrit la couche des images Pléiades
+- <http://tiles.geoapi.fr/ignbase/pleiades2016/{z}/{x}/{y}.png> - identifie et décrit la couche des images Pléiades
   de l'année 2016,
-- <http://tiles.geoapi.fr/igngp/pleiades2016/5/16/11.png> - retourne une tuile de la couche des images Pléiades de l'année 2016,
-- <http://tiles.geoapi.fr/igngp/pleiades{year}/10/507/350.png> - retourne une tuile de la couche des images Pléiades
+- <http://tiles.geoapi.fr/ignbase/pleiades2016/5/16/11.png> - retourne une tuile de la couche des images Pléiades de l'année 2016,
+- <http://tiles.geoapi.fr/ignbase/pleiades{year}/10/507/350.png> - retourne une tuile de la couche des images Pléiades
   de l'année la plus récente,
 
 ## complément
