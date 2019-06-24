@@ -9,7 +9,7 @@ et difficile à utiliser par les non-spécialistes en géomatique,
 notamment les développeurs habitués à utiliser des API.
 On se propose donc ici de définir une
 [**nouvelle infrastructure**](https://github.com/benoitdavidfr/geoinfra/blob/master/README.md),
-appelée *géoinfra*, **plus simple à utiliser** notamemnt pour les non-géomaticiens et cherchant à prendre en compte
+appelée *géoinfra*, **plus simple à utiliser** notamment pour les non-géomaticiens et cherchant à prendre en compte
 les [recommandations W3C/OGC pour la publication de données géographiques sur le web](https://w3c.github.io/sdw/bp/).
 
 Ce document spécifie un web-service de consultation tuilée qui est un service de consultation au sens de la directive Inspire,
@@ -26,7 +26,7 @@ Les points forts de ce nouveau service sont les suivants:
   - le motif d'URL défini par le protocole est en outre utilisé comme URI de la couche
     et fournit une documentation de la couche ;
   - les couches sont regroupées en jeux de données, corespondant à un URI dont l'appel fournit une documentation du jeu
-    et notamment liste les couches exposées ;
+    et notamment la liste les couches exposées ;
   - les jeux de données sont à leur tour regroupés et listés dans les métadonnées du web-service ;
   - en outre, une couche peut être millésimée, c'est à dire correspondre en fait à plusieurs couches chacune
     pour une année particulière.
@@ -45,10 +45,12 @@ Les points forts de ce nouveau service sont les suivants:
   correspondant à une couche par millésime,
 - <http://tiles.geoapi.fr/ignbase/pleiades2016/{z}/{x}/{y}.png> - identifie et décrit la couche des images Pléiades
   de l'année 2016,
-- <http://tiles.geoapi.fr/ignbase/pleiades2016/5/16/11.png> - retourne une tuile de la couche des images Pléiades de l'année 2016,
+- <http://tiles.geoapi.fr/ignbase/pleiades2016/5/16/11.png> - retourne une tuile de la couche des images Pléiades
+  de l'année 2016,
 - <http://tiles.geoapi.fr/ignbase/pleiades{year}/10/507/350.png> - retourne une tuile de la couche des images Pléiades
   de l'année la plus récente,
 
 ## complément
 
-<http://geoapi.fr/tiles/map.php>
+Le script <http://geoapi.fr/tiles/map.php> affiche les couches sous la forme de cartes Leaflet afin de les consulter aisément.
+Pour chaque couche un lien vers sa documentation est proposé. 
