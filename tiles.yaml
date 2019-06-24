@@ -9,11 +9,8 @@ datasets:
     title: Orthos-images, cartes et produits dérivés de MNT produits par IGN
     abstract: |
       Ce jeu de données correspond aux orthos-images, cartes et produits dérivés de MNT produits par IGN et exposés
-      par le Géoportail de l'IGN organisées en différentes couches.
+      par le Géoportail de l'IGN organisés en différentes couches.
       Il faudrait ajouter:
-        - ortho-express IRC 2018
-        - ortho-express 2016, 2017, 2018
-        - BDOrtho Historique 1965-1980
         - SCAN 25 ?
     licence:
       identifier: http://professionnels.ign.fr/tarifs-conditions
@@ -334,7 +331,7 @@ datasets:
           minZoom: 0
           maxZoom: 10
           gpname: GEOGRAPHICALGRIDSYSTEMS.BONNE
-      mnt: # 4) couches produites à partir du MNT
+      mnt: # 4) couches produites à partir du MNT ou documentant le MNT
         teintes-hypsometriques:
           title: MNT BD Alti affiché en teintes hypsométriques
           abstract: |
@@ -387,8 +384,7 @@ datasets:
   ignobj:
     title: Diverses autres couches d'objets produites par IGN + parcellaire
     abstract: |
-      Il faudrait ajouter:
-        - Zones interdites à la prise de vue aérienne
+      Ce jeu de données contient diverses couches d'objets produites par IGN ainsi que le parcellaire.
     licence:
       identifier: http://professionnels.ign.fr/tarifs-conditions
       title: conditions d'utilisation IGN
@@ -441,7 +437,7 @@ datasets:
           minZoom: 6
           maxZoom: 16
           gpname: OCSGE.CONSTRUCTIONS
-        ocs-1825-1866:
+        ocs1825-1866:
           title: OCS 1825-1866
           abstract: |
             Représentation de l'occupation du sol de la France métropolitaine au 19e siècle. La production des données est réalisée à partir des cartes d'Etat-major, élaborées entre 1825 et 1866. Elle est complétée par des mises à jour partielles (ajout des voies de chemin de fer notamment) jusqu'en 1889. Source : IGN

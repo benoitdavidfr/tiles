@@ -17,9 +17,9 @@ doc: |
   A FAIRE:
     - pourquoi prendre le format passé en paramètre et pas celui défini pour la couche ???
   TESTS:
-    - http://localhost/geoapi/tiles/index.php/igngp/scanlitto/15/16277/11676.jpg
+    - http://localhost/geoapi/tiles/index.php/ignbase/scanlitto/15/16277/11676.jpg
 journal: |
-  21-22/6/2019:
+  21-23/6/2019:
     - création de la classe Catatalog pour mutualiser le code
     - ajout de la possibilité de paramétrer une couche par un millésime
   20/6/2019:
@@ -44,7 +44,7 @@ require_once __DIR__.'/http.inc.php';
 
 use Symfony\Component\Yaml\Yaml;
 
-$version = '2019-06-21T08:30:00';
+$version = '2019-06-23T10:00:00';
 $path_info = $_SERVER['PATH_INFO'] ?? null;
 $script_path = "http://$_SERVER[HTTP_HOST]$_SERVER[SCRIPT_NAME]";
 

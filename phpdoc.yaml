@@ -7,11 +7,7 @@ doc: |
     localhost:
       - http://localhost/geoapi/tiles/index.php
     sur_geoapi:
-      - http://tiles.geoapi.fr/igngp - identifie le web-service exposant sous la forme de tuiles les données du Géportail IGN
-        et décrit les couches exposées
-      - http://tiles.geoapi.fr/igngp/cartes/{z}/{x}/{y}.jpg - identifie et décrit la couche cartes exposée sur le Géportail
-      - http://tiles.geoapi.fr/igngp/layers/cartes/16/32945/22940.jpg - retourne une tuile
-      - http://tiles.geoapi.fr/igngp/layers/cartes/16/32945/22940.html - retourne une page Html
+      - http://tiles.geoapi.fr/
   
   synchro par:
     http://localhost/synchro.php?remote=http://prod.geoapi.fr/   
@@ -21,10 +17,7 @@ doc: |
     - ajouter à igngp
       - SCAN 25 ?
     - définir de nvx datasets
-      - admin
-        - admin express
-        - Limites administratives mises à jour en continu.
-      - espaces protégés
+      - espaces protégés biodiv
       - ville
       - forêts
         - DFCI
@@ -40,6 +33,8 @@ doc: |
         - Points de repère routiers (PR)
         - Restrictions et interdictions drones de loisir
 journal: |
+  23/6/2019:
+    - décomposition du jeu igngp en 2 jeux ignbase et ignobj
   21-22/6/2019:
     - possibilité de définir une couche millésimée
   12/6/2019:
@@ -53,8 +48,11 @@ journal: |
 phpScripts:
   - /geoapi/tiles/index.php
   - /geoapi/tiles/map.php
+  - /geoapi/tiles/doc.php
 phpIncludes:
   - /geoapi/tiles/http.inc.php
+  - /geoapi/tiles/htmlviewer.inc.php
 htmlFiles:
   - /geoapi/tiles/tiles.yaml
+  - /geoapi/tiles/tiles.schema.yaml
   - /geoapi/tiles/api.yaml
