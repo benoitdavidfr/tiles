@@ -1,5 +1,5 @@
 # Définition d'un web-service de consultation tuilée
-22 juin 2019 (rédaction en cours)
+24 juin 2019
 
 ## introduction
 
